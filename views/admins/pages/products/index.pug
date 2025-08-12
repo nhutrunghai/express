@@ -1,0 +1,55 @@
+extend ../../layout/dashboard.pug
+block main
+    .container.mt-4
+        // Tiêu đề và bộ lọc
+        .d-flex.justify-content-between.mb-3
+            h2 Danh sách sản phẩm
+            .d-flex
+                button.btn.btn-outline-primary.me-2(data-set = "") Tất cả
+                button.btn.btn-success.me-2(data-set = "active") Hoạt động
+                button.btn.btn-danger(data-set="inactive") Dừng hoạt động
+
+        // Thanh tìm kiếm
+        .mb-3
+            form(action="#", method="get" id='search-product')
+                .input-group
+                    input.form-control(type="text", placeholder="Tìm kiếm sản phẩm", name="search" value = keySearch ? keySearch : "")
+                    button.btn.btn-primary(type="submit") Tìm
+
+
+        // Bảng danh sách sản phẩm
+        table.table.table-striped
+            thead
+                tr
+                    th STT
+                    th Hình ảnh
+                    th Tiêu đề
+                    th Giá
+                    th Trạng thái
+                    th Hành động
+            tbody
+                each item,key in products 
+                    tr
+                        td #{key + 1}
+                        td
+                            img(src="https://cdn-images.vtv.vn/2019/10/10/photo-1-15706463929181755249740.jpg", alt=item.title, width="50", height="50")
+                        td #{item.title}
+                        td #{item.price}
+                        td
+                            span.badge(class=item.status === "active" ? "bg-success" : "bg-danger")  #{item.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+                        td
+                            button.btn.btn-warning.btn-sm Sửa
+                            button.btn.btn-danger.btn-sm Xóa
+        nav
+            ul(class="pagination")
+                li(class="page-item")
+                    button(class="page-link") Trang trước
+                //- each i,index in products 
+                //-     li(class="page-item")
+                //-         button(class="page-link") #{index + 1}
+                li(class="page-item")
+                    button(class="page-link") Kế tiếp
+block script 
+    script(src="/admin/js/script.js") 
+
+    
