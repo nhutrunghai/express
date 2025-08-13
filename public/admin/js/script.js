@@ -32,7 +32,14 @@ if(!page) {
   page = 1
   querySearch.set('page','1')
   history.pushState(null,null,`?${querySearch}${location.hash}`)
+}else{
+  if(document.querySelectorAll(".page-item").length === 0){
+    querySearch.delete('page')
+    history.pushState(null,null,`?${querySearch}${location.hash}`)
+  }
 }
+
+
 const pageActive = document.querySelector(`.page-item[data-set="${page}"]`)
 if(pageActive) pageActive.classList.add('active')
 
