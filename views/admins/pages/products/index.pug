@@ -44,9 +44,9 @@ block main
             ul(class="pagination")
                 li(class="page-item")
                     button(class="page-link") Trang trước
-                //- each i,index in products 
-                //-     li(class="page-item")
-                //-         button(class="page-link") #{index + 1}
+                each i,index in arrPage 
+                    li(class="page-item", data-set = index + 1)
+                        button(class="page-link") #{index + 1}
                 li(class="page-item")
                     button(class="page-link") Kế tiếp
 block script 
