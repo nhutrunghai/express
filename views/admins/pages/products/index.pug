@@ -41,14 +41,22 @@ block main
                             button.btn.btn-warning.btn-sm Sửa
                             button.btn.btn-danger.btn-sm Xóa
         nav
-            ul(class="pagination")
-                li(class="page-item")
-                    button(class="page-link") Trang trước
-                each i,index in arrPage 
-                    li(class="page-item", data-set = index + 1)
-                        button(class="page-link") #{index + 1}
-                li(class="page-item")
-                    button(class="page-link") Kế tiếp
+            if(arrPage.length !== 0)
+                ul(class="pagination")
+                    li(class="page-item")
+                        button(class="page-link") Trang trước
+                    each i,index in arrPage 
+                        li(class="page-item", data-set = index + 1)
+                            button(class="page-link") #{index + 1}
+                    li(class="page-item")
+                        button(class="page-link") Kế tiếp
+            else
+                .card.text-center
+                    .card-body
+                        i(class="fas fa-info-circle fa-3x text-muted mb-3")
+                        h5(class="card-title") Không có sản phẩm nào cả
+                        p(class="card-text") Chúng tôi không thể tìm thấy sản phẩm nào phù hợp với tìm kiếm của bạn. Hãy thử tìm kiếm lại.
+                        a.btn.btn-primary(href="/admin/products") Quay lại trang chủ
 block script 
     script(src="/admin/js/script.js") 
 
