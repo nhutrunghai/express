@@ -30,7 +30,7 @@ block main
             tbody
                 each item,key in products 
                     tr
-                        td #{key + 1}
+                        td #{item.stt}
                         td
                             img(src="https://cdn-images.vtv.vn/2019/10/10/photo-1-15706463929181755249740.jpg", alt=item.title, width="50", height="50")
                         td #{item.title}
@@ -41,15 +41,19 @@ block main
                             button.btn.btn-warning.btn-sm Sửa
                             button.btn.btn-danger.btn-sm Xóa
         nav
-            if(arrPage.length !== 0)
+            if(ObjProdcuts.quantityItem !== 0)
                 ul(class="pagination")
-                    li(class="page-item")
-                        button(class="page-link") Trang trước
-                    each i,index in arrPage 
-                        li(class="page-item", data-set = index + 1)
-                            button(class="page-link") #{index + 1}
-                    li(class="page-item")
-                        button(class="page-link") Kế tiếp
+                    if(ObjProdcuts.currentPage > 1)
+                        li(class="page-item" data-set = ObjProdcuts.currentPage - 1)
+                            button(class="page-link") Trang trước
+                    - for(var i = 1; i <= ObjProdcuts.totalPage;i++)
+
+                        li(class=`page-item ${ObjProdcuts.currentPage == i ? "active" : ""}`, data-set = i)
+                            button(class="page-link") #{i}
+                    if(ObjProdcuts.currentPage < ObjProdcuts.totalPage )
+                        li(class="page-item" data-set = ObjProdcuts.currentPage + 1)
+                            button(class="page-link") Kế tiếp
+                    
             else
                 .card.text-center
                     .card-body

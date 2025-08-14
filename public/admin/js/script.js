@@ -25,6 +25,8 @@ formSearch.addEventListener("submit", function (e) {
   const valueInput = this.elements.search.value;
   handleUrl("search", valueInput);
 });
+
+
 // handle page
 const querySearch = new URLSearchParams(location.search);
 let page = querySearch.get("page");
@@ -40,9 +42,8 @@ if(!page) {
 }
 
 
-const pageActive = document.querySelector(`.page-item[data-set="${page}"]`)
-if(pageActive) pageActive.classList.add('active')
 
+// handle click page
 const pagination = document.querySelectorAll(".page-item");
 pagination.forEach((element) => {
   element.onclick = () => {
