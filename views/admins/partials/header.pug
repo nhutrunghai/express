@@ -1,2 +1,34 @@
-header Header
-    h1 ADMIN
+//- Header Admin
+header#admin-header.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top.shadow-sm
+  .container-fluid
+    // Logo / Brand
+    a.navbar-brand.fw-bold(href="/admin") 
+      i.bi.bi-speedometer2.me-2
+      | Admin Panel
+
+    // Nút toggle khi màn hình nhỏ
+    button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#adminNavbar", aria-controls="adminNavbar", aria-expanded="false", aria-label="Toggle navigation")
+      span.navbar-toggler-icon
+
+    // Nội dung header (menu, user)
+    #adminNavbar.collapse.navbar-collapse
+      //- Search box
+      form.d-flex.ms-auto.me-3(role="search", action="/admin/search", method="GET")
+        input.form-control.form-control-sm.me-2(type="search", name="q", placeholder="Tìm kiếm...", aria-label="Search")
+        button.btn.btn-outline-light.btn-sm(type="submit") Tìm
+
+      //- User menu
+      ul.navbar-nav.mb-2.mb-lg-0
+        li.nav-item.dropdown
+          a#userDropdown.nav-link.dropdown-toggle(href="#", role="button", data-bs-toggle="dropdown", aria-expanded="false")
+            img.rounded-circle.me-1(src="https://www.svgrepo.com/show/384670/account-avatar-profile-user.svg", alt="User", width="28", height="28")
+            | Admin
+          ul.dropdown-menu.dropdown-menu-end(aria-labelledby="userDropdown")
+            li
+              a.dropdown-item(href="/admin/profile") Hồ sơ
+            li
+              a.dropdown-item(href="/admin/settings") Cài đặt
+            li
+              hr.dropdown-divider
+            li
+              a.dropdown-item.text-danger(href="/admin/logout") Đăng xuất

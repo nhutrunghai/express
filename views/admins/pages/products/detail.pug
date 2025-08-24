@@ -1,0 +1,85 @@
+extend ../../layout/dashboard.pug 
+include ../../mixins/toast.pug
+
+block main
+  //- CSS riêng cho trang chi tiết
+  style.
+    .product-cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: .5rem;
+      border: 1px solid rgba(0,0,0,.1);
+      background: #f8f9fa;
+    }
+    .kv { width: 180px; color: #6c757d; } /* cột nhãn trong bảng key–value */
+
+  .container.my-4
+    //- Header + Breadcrumb
+    .mb-3.d-flex.justify-content-between.align-items-center
+      nav(aria-label='breadcrumb')
+        h3.text-primary Product
+      .d-flex.gap-2
+        a.btn.btn-outline-secondary(href=`/${pathAdmin}/products`) Quay lại
+
+    //- Card chi tiết
+    .card.shadow-sm
+      .card-header
+        h5.mb-0 Chi tiết sản phẩm
+      .card-body
+        .row.g-4
+          //- Ảnh
+          .col-12.col-md-4
+            img.product-cover(src=product.thumbnail, alt=product.title)
+
+          //- Thông tin
+          .col-12.col-md-8
+            h3.mb-3= product.title
+
+            //- Trạng thái
+            .mb-3
+              span.badge(class= product.status === 'active' ? 'bg-success' : 'bg-danger')
+                = product.status === 'active' ? 'Hoạt động' : 'Dừng hoạt động'
+
+            //- Bảng key–value
+            .table-responsive
+              table.table.align-middle
+                tbody
+                  tr
+                    th.kv Slug
+                    td
+                      code= product.slug
+                  tr
+                    th.kv Giá
+                    td
+                      strong= product.price
+                  tr
+                    th.kv % Giảm giá
+                    td= product.discountPercentage + '%'
+                  tr
+                    th.kv Số lượng tồn
+                    td= product.stock
+                  tr
+                    th.kv Vị trí (position)
+                    td= product.position
+                  tr
+                    th.kv Ngày tạo
+                    td= product.createdAt ? new Date(product.createdAt).toLocaleString('vi-VN') : ''
+                  tr
+                    th.kv Mã ID
+                    td
+                      code= product._id
+
+            //- Hành động nhanh
+            .d-flex.flex-wrap.gap-2.mt-3
+              a.btn.btn-primary(href=`/${pathAdmin}/products/edit/${product._id}`) Chỉnh sửa  
+
+    //- Thêm phần mô tả ở dưới card
+    .card.shadow-sm.mt-4
+      .card-header
+        h5.mb-0 Mô tả sản phẩm
+      if product.description
+        .card-body !{product.description}
+      else
+        .card-body
+          p.text-muted Không có mô tả

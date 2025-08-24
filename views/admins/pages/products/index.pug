@@ -1,67 +1,164 @@
 extend ../../layout/dashboard.pug
+include ../../mixins/toast.pug
+
 block main
-    .container.mt-4
-        // Tiêu đề và bộ lọc
-        .d-flex.justify-content-between.mb-3
-            h2 Danh sách sản phẩm
-            .d-flex
-                button.btn.btn-outline-primary.me-2(data-set = "") Tất cả
-                button.btn.btn-success.me-2(data-set = "active") Hoạt động
-                button.btn.btn-danger(data-set="inactive") Dừng hoạt động
+  // Styles nhỏ, không đụng class cũ
+  style.
+    .toolbar-sticky { position: sticky; top: 0; z-index: 101; }
+    .table-sticky thead th { position: sticky; top: 0; background: #fff; }
+    .table-avatar { width: 50px; height: 50px; object-fit: cover; border-radius: .5rem; }
+    .k-actions button + button { margin-left: .25rem; }
 
-        // Thanh tìm kiếm
-        .mb-3
-            form(action="#", method="get" id='search-product')
+  .container.mt-4
+
+    // == Thanh công cụ: tiêu đề + filter + search + sort
+    .card.border-0.shadow-sm.mb-3.toolbar-sticky
+      .card-body
+        .d-flex.flex-wrap.align-items-center.justify-content-between.gap-2
+          h2.h4.mb-0 Danh sách sản phẩm
+
+          // Nhóm filter trạng thái
+          .d-flex.align-items-center.gap-2.flex-wrap
+            .btn-group(role="group" aria-label="Bộ lọc trạng thái")
+              // Giữ nguyên data-set
+              button.btn.btn-outline-primary.me-2(class=(currentStatus===''?'active':undefined) data-set="") Tất cả
+              button.btn.btn-success.me-2(class=(currentStatus==='active'?'active':undefined) data-set="active") Hoạt động
+              button.btn.btn-danger(class=(currentStatus==='inactive'?'active':undefined) data-set="inactive") Dừng hoạt động
+
+        // Tìm kiếm + Sắp xếp
+        .mt-3
+          .row.g-2
+            .col-12.col-lg-6
+              form(action="#", method="get", id="search-product")
                 .input-group
-                    input.form-control(type="text", placeholder="Tìm kiếm sản phẩm", name="search" value = keySearch ? keySearch : "")
-                    button.btn.btn-primary(type="submit") Tìm
+                  input.form-control(type="text", placeholder="Tìm kiếm sản phẩm", name="search", value= keySearch ? keySearch : "")
+                  button.btn.btn-primary(type="submit") Tìm
+            .col-12.col-lg-6
+              // Nhóm sắp xếp (đen)
+              .d-flex.align-items-center.gap-2.flex-wrap.justify-content-lg-end
+                span.text-muted.small Sắp xếp:
+                .btn-group#sortGroup(role='group' aria-label='Sắp xếp nhanh')
+                  button.btn.btn-outline-dark(type='button' data-sort='position') Vị Trí
+                  button.btn.btn-outline-dark(type='button' data-sort='new') Mới Nhất
+                  button.btn.btn-outline-dark(type='button' data-sort='quanity') Số Lượng
+                .dropdown
+                  button#priceToggle.btn.btn-outline-dark.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-expanded='false') Giá
+                  ul#priceMenu.dropdown-menu
+                    li
+                      button.dropdown-item(type='button' data-sort='price_asc') Giá: Thấp đến Cao
+                    li
+                      button.dropdown-item(type='button' data-sort='price_desc') Giá: Cao đến Thấp
 
+    +Toast(messages)
 
-        // Bảng danh sách sản phẩm
-        table.table.table-striped
+    // == Hàng thao tác nhanh + nút thêm
+    .row.align-items-start.gy-2.mb-3
+      .col-12.col-lg-8
+        form(
+          action=`/${pathAdmin}/products/change-multi?_method=PATCH`
+          method="POST"
+          form-change-multi
+          class="border-0 shadow-sm card"
+        )
+          .card-body.d-flex.align-items-start.flex-wrap.gap-2
+            .form-group
+              select(name="type" class="form-control")
+                option(disabled selected) -- Chọn hành động -- 
+                option(value="active") Hoạt động
+                option(value="inactive") Dừng hoạt động
+                option(value="delete-select") Xóa sản phẩm 
+                option(value="changel-postion") Thay đổi vị trí
+            .form-group
+              input(
+                type="text"
+                name="ids"
+                value=""
+                class="form-control"
+                hidden
+              )
+            button(type="submit" class="btn btn-primary") Áp dụng
+      .col-12.col-lg-4.d-flex.justify-content-lg-end
+        a(
+          href=`/${pathAdmin}/products/create`
+          class="btn btn-outline-success w-100 w-lg-auto"
+        ) + Thêm mới
+
+    // == Bảng danh sách (có cuộn ngang + header dính)
+    .card.border-0.shadow-sm
+      .card-body.p-0
+        .table-responsive
+          table.table.table-striped.table-hover.mb-0.table-sticky
             thead
-                tr
-                    th STT
-                    th Hình ảnh
-                    th Tiêu đề
-                    th Giá
-                    th Trạng thái
-                    th Hành động
+              tr  
+                th(style="width:44px")
+                  input(type="checkbox", name="checkall")
+                th STT
+                th Hình ảnh
+                th Tiêu đề
+                th Giá
+                th SL
+                th Vị Trí
+                th Trạng thái
+                th Hành động
             tbody
-                each item,key in products 
-                    tr
-                        td #{item.stt}
-                        td
-                            img(src="https://cdn-images.vtv.vn/2019/10/10/photo-1-15706463929181755249740.jpg", alt=item.title, width="50", height="50")
-                        td #{item.title}
-                        td #{item.price}
-                        td
-                            span.badge(class=item.status === "active" ? "bg-success" : "bg-danger")  #{item.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
-                        td
-                            button.btn.btn-warning.btn-sm Sửa
-                            button.btn.btn-danger.btn-sm Xóa
-        nav
-            if(ObjProdcuts.quantityItem !== 0)
-                ul(class="pagination")
-                    if(ObjProdcuts.currentPage > 1)
-                        li(class="page-item" data-set = ObjProdcuts.currentPage - 1)
-                            button(class="page-link") Trang trước
-                    - for(var i = 1; i <= ObjProdcuts.totalPage;i++)
+              each item, key in products
+                tr
+                  td
+                    input(type="checkbox", name="id", value=item._id, checkItem)
+                  td #{item.stt}
+                  td
+                    img.table-avatar(src=item.thumbnail, alt=item.title, width="50", height="50")
+                  td 
+                    .fw-semibold #{item.title}
+                    if item.sku
+                      .text-muted.small SKU: #{item.sku}
+                  td #{item.price}
+                  td #{item.stock}
+                  td 
+                    input(type="number", name="postion", style="width:60px", value=item.position)
+                  td
+                    // Giữ nguyên change-status + data-id + data-status
+                    span.badge(
+                      class= item.status === "active" ? "bg-success" : "bg-danger"
+                      role="button"
+                      data-id=item._id
+                      data-status=item.status
+                      change-status
+                    ) #{item.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+                  td
+                    .k-actions.d-flex.flex-wrap
+                      button.btn.btn-warning.btn-sm(data-id=item._id, edit-item) Sửa
+                      button.btn.btn-danger.btn-sm(data-id=item._id, delete-item) Xóa
+                      button.btn.btn-info.btn-sm(data-id=item._id, view-item) Xem
 
-                        li(class=`page-item ${ObjProdcuts.currentPage == i ? "active" : ""}`, data-set = i)
-                            button(class="page-link") #{i}
-                    if(ObjProdcuts.currentPage < ObjProdcuts.totalPage )
-                        li(class="page-item" data-set = ObjProdcuts.currentPage + 1)
-                            button(class="page-link") Kế tiếp
-                    
-            else
-                .card.text-center
-                    .card-body
-                        i(class="fas fa-info-circle fa-3x text-muted mb-3")
-                        h5(class="card-title") Không có sản phẩm nào cả
-                        p(class="card-text") Chúng tôi không thể tìm thấy sản phẩm nào phù hợp với tìm kiếm của bạn. Hãy thử tìm kiếm lại.
-                        a.btn.btn-primary(href="/admin/products") Quay lại trang chủ
-block script 
-    script(src="/admin/js/script.js") 
+    // == Phân trang
+    nav(aria-label="Phân trang sản phẩm").mt-3
+      if (ObjProdcuts.quantityItem !== 0)
+        ul(class="pagination justify-content-center")
+          if (ObjProdcuts.currentPage > 1)
+            li(class="page-item", data-set=ObjProdcuts.currentPage - 1)
+              button(class="page-link") Trang trước
+          - for (var i = 1; i <= ObjProdcuts.totalPage; i++)
+            li(class=`page-item ${ObjProdcuts.currentPage == i ? "active" : ""}`, data-set=i)
+              button(class="page-link") #{i}
+          if (ObjProdcuts.currentPage < ObjProdcuts.totalPage)
+            li(class="page-item", data-set=ObjProdcuts.currentPage + 1)
+              button(class="page-link") Kế tiếp
+      else
+        .card.text-center.border-0.shadow-sm
+          .card-body
+            i.mb-3.fas.fa-info-circle.fa-3x.text-muted
+            h5.card-title Không có sản phẩm nào cả
+            p.card-text.text-muted Chúng tôi không thể tìm thấy sản phẩm nào phù hợp với tìm kiếm của bạn. Hãy thử tìm kiếm lại.
+            a.btn.btn-primary(href="/admin/products") Quay lại trang chủ
 
-    
+    // == Forms ẩn (giữ nguyên)
+    form(action="", method="POST", form-change, data-path=`/${pathAdmin}/products/change-status`)
+    form(action="", method="POST", form-delete, data-path=`/${pathAdmin}/products/delete`) 
+
+block script
+  script(src="/admin/js/handle.change-multi.js")
+  script(src="/admin/js/handle.change-single.js")
+  script(src="/admin/js/handle.filter-status.js")      
+  script(src="/admin/js/products.js")
+  script(src="/admin/js/products.sort.js")

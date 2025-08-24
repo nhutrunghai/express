@@ -1,0 +1,111 @@
+extend ../../layout/dashboard.pug 
+include ../../mixins/toast.pug
+
+block main 
+  // === Font: Inter (biến thể Variable) + tối ưu tải
+  link(rel="preconnect" href="https://fonts.googleapis.com")
+  link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+  link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..800&display=swap")
+
+  link(rel="stylesheet", href="/admin/css/products.create.css")
+
+  // ==== Style nhẹ cho trang create (không đụng class cũ)
+  style.
+    html, body {
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: 0;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 700;
+      letter-spacing: .005em;
+    }
+    .btn { font-weight: 600; border-radius: 10px; }
+    .form-control, .form-select { border-radius: 10px; font-weight: 500; }
+    .input-group-text { border-radius: 10px; font-weight: 600; }
+    label.form-label { font-weight: 600; }
+    small, .form-hint { font-weight: 500; }
+    .card-soft { border: 0; border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.06); }
+    .section-title { font-size: .9rem; text-transform: uppercase; letter-spacing:.06em; color:#6c757d; margin-bottom:.75rem; }
+    .form-hint { font-size:.825rem; color:#6c757d; }
+    .sticky-actions { position: sticky; bottom: 0; background:#fff; border-top:1px solid #eee; padding: .75rem; z-index: 2; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+    .preview-wrap { display:flex; align-items:center; gap:.75rem; margin-top:.5rem; }
+    .preview-wrap img { width:150px; height:150px; object-fit:cover; border:1px dashed #dee2e6; border-radius:12px; background:#f8f9fa; }
+
+  +Toast(messages)
+
+  .container.mt-5
+    h2.mb-4 Form Thêm Sản Phẩm
+
+    // ==== Card bọc toàn bộ form
+    .card.card-soft
+      form(action=`/${pathAdmin}/products/create` form-create-item method="POST" enctype="multipart/form-data")
+        .card-body
+          // ===== Hàng 1: Tiêu đề + Mô tả
+          .row.g-4
+            .col-12.col-lg-6
+              .section-title Thông tin chính
+              .mb-3
+                label.form-label(for='title') Tiêu đề
+                input#title.form-control(type='text' placeholder='Nhập tiêu đề' name='title' required)
+                .form-hint Tiêu đề dùng để hiển thị và tạo slug.
+              .mb-3
+                label.form-label(for='description') Mô tả
+                textarea#description.form-control(rows='5' placeholder='Nhập mô tả' name='description')
+
+            .col-12.col-lg-6
+              .section-title Giá & Tồn kho
+              .mb-3
+                label.form-label(for='price') Giá
+                .input-group
+                  input#price.form-control(type='number' min='0' step='1000' placeholder='Nhập giá' value='0' name='price')
+                  span.input-group-text ₫
+                .form-hint Bỏ trống hoặc 0 nếu sản phẩm chưa định giá.
+              .mb-3
+                label.form-label(for='discount') % Giảm giá
+                .input-group
+                  input#discount.form-control(type='number' min='0' max='100' step='1' placeholder='Nhập % giảm giá' value='0' name='discountPercentage')
+                  span.input-group-text %
+              .mb-3
+                label.form-label(for='quantity') Số lượng
+                input#quantity.form-control(type='number' min='0' step='1' placeholder='Nhập số lượng' value='0' name='stock')
+
+          // ===== Hàng 2: Ảnh & Vị trí + Trạng thái
+          .row.g-4
+            .col-12.col-lg-6
+              .section-title Ảnh & Vị trí
+              .mb-3
+                label.form-label(for='image') Ảnh đại diện
+                input#image.form-control-file(type='file' name='thumbnail' accept='image/*' )
+                .mt-2.preview-wrap
+                  img.thumb-preview( alt='Preview (chưa chọn ảnh)')
+                  button(type='button' class='btn btn-outline-danger btn-sm' remove-image) Xóa ảnh
+                .form-hint.mt-1 JPG/PNG, khuyến nghị tỉ lệ 1:1.
+              .mb-3
+                label.form-label(for='position') Vị trí
+                .input-group
+                  input#position.form-control(type='number' name='position' placeholder='Tự động tăng')
+                  span.input-group-text Thứ tự
+
+            .col-12.col-lg-6
+              .section-title Trạng thái hiển thị
+              .mb-2
+                input#active.btn-check(type='radio' name='status' checked autocomplete='off' value='active')
+                label.btn.btn-outline-success.me-2(for='active') Hoạt động
+                input#inactive.btn-check(type='radio' name='status' autocomplete='off' value='inactive')
+                label.btn.btn-outline-secondary(for='inactive') Dừng hoạt động
+              .form-hint Chọn “Dừng hoạt động” nếu chưa muốn hiển thị trên trang bán.
+
+        // ==== Thanh hành động cố định cuối form
+        .sticky-actions
+          a.btn.btn-outline-secondary(href=`/${pathAdmin}/products`) Quay lại
+          button.btn.btn-primary(type='submit')
+            i.fas.fa-save.me-1
+            | Tạo mới
+
+block script  
+  script(src="/admin/js/products.priview.js")
+  script(src="/tinymce/tinymce.min.js") 
+  script(src="/admin/js/tinymce.js")
+  

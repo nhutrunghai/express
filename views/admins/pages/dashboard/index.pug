@@ -1,3 +1,200 @@
-extend ../../layout/dashboard.pug
-block main 
-    h1 Trang quản trị #{pathAdmin}
+//- views/admin/dashboard/index.pug
+extends ../../layout/dashboard.pug
+include ../../mixins/toast.pug
+block head
+  // Chart.js
+  script(src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js")
+  style.
+    .kpi-card{border-radius:14px}
+    .kpi-trend.up{color:#16a34a}
+    .kpi-trend.down{color:#dc2626}
+    .table thead th{white-space:nowrap}
+    .mini-badge{font-size:.75rem}
+    .avatar-sm{width:32px;height:32px;object-fit:cover;border-radius:50%}
+
+block main
+  .container-fluid.g-0.p-3.p-md-4
+    //- Header
+    .d-flex.flex-wrap.align-items-center.justify-content-between.mb-3
+      h3.mb-2.mb-md-0 Dashboard
+      .text-muted
+        span.me-2
+          i.bi.bi-calendar2-week
+        | Cập nhật: #{new Date().toLocaleString('vi-VN')}
+
+    //- KPI Cards
+    .row.g-3
+      .col-12.col-sm-6.col-xl-3
+        .card.kpi-card.shadow-sm
+          .card-body
+            .d-flex.justify-content-between.align-items-start
+              div
+                .text-muted.mb-1 Doanh thu hôm nay
+                h4.mb-0 #{(kpi && kpi.todayRevenue) || '₫0'}
+                .kpi-trend.up.mt-1
+                  i.bi.bi-arrow-up-right.me-1
+                  | #{(kpi && kpi.todayRevenueChange) || '+0.0%'}
+              i.bi.bi-currency-exchange.fs-3.text-primary
+      .col-12.col-sm-6.col-xl-3
+        .card.kpi-card.shadow-sm
+          .card-body
+            .d-flex.justify-content-between.align-items-start
+              div
+                .text-muted.mb-1 Đơn mới
+                h4.mb-0 #{(kpi && kpi.newOrders) || 0}
+                .kpi-trend.up.mt-1
+                  i.bi.bi-bag-check.me-1
+                  | Tỷ lệ hoàn tất #{(kpi && kpi.orderCompleteRate) || '0%'}
+              i.bi.bi-bag.fs-3.text-primary
+      .col-12.col-sm-6.col-xl-3
+        .card.kpi-card.shadow-sm
+          .card-body
+            .d-flex.justify-content-between.align-items-start
+              div
+                .text-muted.mb-1 Người dùng mới
+                h4.mb-0 #{(kpi && kpi.newUsers) || 0}
+                .kpi-trend.up.mt-1
+                  i.bi.bi-person-plus.me-1
+                  | #{(kpi && kpi.newUsersChange) || '+0.0%'}
+              i.bi.bi-people.fs-3.text-primary
+      .col-12.col-sm-6.col-xl-3
+        .card.kpi-card.shadow-sm
+          .card-body
+            .d-flex.justify-content-between.align-items-start
+              div
+                .text-muted.mb-1 Tỷ lệ chuyển đổi
+                h4.mb-0 #{(kpi && kpi.conversion) || '0.00%'}
+                .kpi-trend.down.mt-1
+                  i.bi.bi-activity.me-1
+                  | #{(kpi && kpi.conversionChange) || '-0.0%'}
+              i.bi.bi-graph-up-arrow.fs-3.text-primary
+
+    //- Charts
+    .row.g-3.mt-1
+      .col-12.col-xl-8
+        .card.shadow-sm
+          .card-header.d-flex.justify-content-between.align-items-center
+            span.fw-semibold Doanh thu 7 ngày
+            .text-muted.mini-badge
+              i.bi.bi-clock-history.me-1
+              | realtime ~1m
+          .card-body
+            canvas#chartRevenue(height="120")
+      .col-12.col-xl-4
+        .card.shadow-sm
+          .card-header.fw-semibold Đơn hàng theo danh mục
+          .card-body
+            canvas#chartByCategory(height="120")
+
+    //- Recent Orders + Top Products
+    .row.g-3.mt-1
+      .col-12.col-xxl-8
+        .card.shadow-sm
+          .card-header.d-flex.justify-content-between.align-items-center
+            span.fw-semibold Đơn hàng gần đây
+            a.btn.btn-sm.btn-outline-primary(href="/admin/orders") Xem tất cả
+          .table-responsive
+            table.table.table-hover.mb-0
+              thead
+                tr
+                  th Mã
+                  th Khách
+                  th Sản phẩm
+                  th Trạng thái
+                  th Tổng
+                  th Thời gian
+              tbody
+                each o in (orders || [])
+                  tr
+                    td
+                      a(href=`/admin/orders/${o._id}`) #{o.code || (o._id && o._id.slice(-6)) || '—'}
+                    td #{(o && o.customer && o.customer.name) || 'N/A'}
+                    td #{(o && o.items && o.items.length) || 0} dòng
+                    td
+                      - const st = (o && o.status) || 'unknown'
+                      span.badge.rounded-pill(class= st==='paid' ? 'text-bg-success' : st==='pending' ? 'text-bg-warning' : 'text-bg-secondary')= st
+                    td #{(o && o.totalFormatted) || '₫0'}
+                    td #{(o && o.createdAt && new Date(o.createdAt).toLocaleString('vi-VN')) || ''}
+                if !(orders && orders.length)
+                  tr
+                    td.text-center.text-muted.py-4(colspan="6") Không có dữ liệu
+      .col-12.col-xxl-4
+        .card.shadow-sm
+          .card-header.d-flex.justify-content-between.align-items-center
+            span.fw-semibold Sản phẩm bán chạy
+            a.btn.btn-sm.btn-outline-secondary(href="/admin/products") Quản lý
+          .list-group.list-group-flush
+            each p in (topProducts || [])
+              .list-group-item.d-flex.align-items-center.justify-content-between
+                .d-flex.align-items-center
+                  img.avatar-sm.me-2(src=(p && p.thumbnail) alt=(p && p.title))
+                  .d-block
+                    .fw-semibold= (p && p.title) || '—'
+                    .text-muted.small #{(p && p.sku) || ''} · #{(p && p.category) || 'Uncat.'}
+                .text-end
+                  .fw-semibold #{(p && p.sold) || 0} bán
+                  .small.text-muted #{(p && p.revenueFormatted) || '₫0'}
+            if !(topProducts && topProducts.length)
+              .list-group-item.text-center.text-muted Không có dữ liệu
+
+    //- Activity & System
+    .row.g-3.mt-1
+      .col-12.col-xl-6
+        .card.shadow-sm
+          .card-header.fw-semibold Hoạt động gần đây
+          .card-body
+            if activities && activities.length
+              ul.list-unstyled.mb-0
+                each a in activities
+                  li.mb-3
+                    .d-flex
+                      i.bi.bi-dot.fs-3.me-2.text-primary
+                      .flex-grow-1
+                        .fw-semibold= a.title
+                        .text-muted.small= a.time
+                        if a.desc
+                          .small= a.desc
+            else
+              .text-muted Không có hoạt động
+      .col-12.col-xl-6
+        .card.shadow-sm
+          .card-header.fw-semibold Trạng thái hệ thống
+          .card-body
+            .row.g-3
+              .col-6
+                .p-3.bg-light.rounded.border
+                  .text-muted.small API latency
+                  .fw-semibold #{(sys && sys.latency) || '--'} ms
+              .col-6
+                .p-3.bg-light.rounded.border
+                  .text-muted.small Uptime 24h
+                  .fw-semibold #{(sys && sys.uptime) || '--'} %
+            .mt-3
+              .text-muted.small Phiên bản
+              .fw-semibold #{(sys && sys.version) || 'v1.0.0'}
+
+block script
+  //- Fallback data để vẽ chart khi chưa có data server
+  script.
+    const _rev = #{JSON.stringify((typeof revenue7d !== 'undefined' && revenue7d) || {labels:['T2','T3','T4','T5','T6','T7','CN'], data:[120,90,150,80,170,220,140]})};
+    const _cat = #{JSON.stringify((typeof ordersByCategory !== 'undefined' && ordersByCategory) || {labels:['Điện tử','Thời trang','Gia dụng','Khác'], data:[35,22,18,9]})};
+
+    (() => {
+      const ctx = document.getElementById('chartRevenue');
+      if(!ctx) return;
+      new Chart(ctx, {
+        type: 'line',
+        data: { labels: _rev.labels, datasets: [{ label: 'Doanh thu (₫)', data: _rev.data, tension:.35, fill:true, borderWidth:2 }]},
+        options: { responsive:true, plugins:{ legend:{ display:false }}, scales:{ y:{ ticks:{ callback:v => v.toLocaleString('vi-VN') } } } }
+      });
+    })();
+
+    (() => {
+      const ctx = document.getElementById('chartByCategory');
+      if(!ctx) return;
+      new Chart(ctx, {
+        type: 'bar',
+        data: { labels: _cat.labels, datasets: [{ label: 'Đơn hàng', data: _cat.data, borderWidth:1 }]},
+        options: { responsive:true, plugins:{ legend:{ display:false }}, scales:{ y:{ beginAtZero:true } } }
+      });
+    })();

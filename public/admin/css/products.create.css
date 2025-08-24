@@ -1,0 +1,13 @@
+.priview {
+  position: relative;
+}
+.priview span {
+  position: absolute;
+  cursor: pointer;
+  top: -20px;
+  right: -18px;
+  font-size: 18px;
+  color: red;
+  padding: 7px 12px;
+  font-style: oblique;
+}

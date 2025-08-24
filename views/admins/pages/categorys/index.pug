@@ -1,0 +1,272 @@
+extend ../../layout/dashboard.pug
+include ../../mixins/toast.pug
+block main
+  style.
+    .toolbar-sticky { position: sticky; top: 0; z-index: 101; }
+    .table-sticky thead th { position: sticky; top: 0; background: #fff; }
+    .k-actions button + button { margin-left: .25rem; }
+    .slug-muted { font-size: .85rem; color: #6c757d; }
+
+    /* ====== ANIMATION MƯỢT HƠN CHO PANE ====== */
+    :root { --pane-speed: .9s; --pane-ease: cubic-bezier(.22,.61,.36,1); }
+    .split { display: flex; gap: 1rem; }
+    .pane {
+      display: flex; flex-direction: column;
+      flex: 1 1 50%; min-width: 0;
+      transition:
+        flex-basis var(--pane-speed) var(--pane-ease),
+        max-width  var(--pane-speed) var(--pane-ease),
+        width      var(--pane-speed) var(--pane-ease);
+      will-change: flex-basis, max-width, width;
+    }
+    .pane.is-expanded   { flex: 1 1 100%; }
+    .pane.is-collapsed  { flex: 0 0 76px; max-width: 76px; overflow: hidden; }
+    .pane.is-collapsed .card-body { display: none; }
+    .pane .pane-header-title { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .pane .card-header { padding: .5rem .75rem; }
+    .pane .btn-expand { white-space: nowrap; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pane { transition: none !important; }
+    }
+
+    @media (max-width: 991.98px) {
+      .split { flex-direction: column; }
+      .pane, .pane.is-expanded, .pane.is-collapsed { flex: 1 1 auto; max-width: 100%; }
+      .pane .card-body { display: block; }
+    }
+  
+  .container.mt-4
+    +Toast(messages)
+    // == Toolbar trên cùng
+    .card.border-0.shadow.toolbar-sticky.mb-3
+      .card-body
+        .d-flex.flex-wrap.align-items-center.justify-content-between.gap-2
+          h2.h4.mb-0 Danh mục sản phẩm
+          .d-flex.align-items-center.gap-2.flex-wrap
+            .btn-group(role="group" aria-label="Bộ lọc trạng thái")
+              button.btn.btn-outline-secondary(class=(currentStatus===''?'active':undefined) data-set="")
+                i.fas.fa-layer-group.me-1
+                | Tất cả
+              button.btn.btn-outline-secondary(class=(currentStatus==='active'?'active':undefined) data-set="active")
+                i.fas.fa-toggle-on.me-1
+                | Hoạt động
+              button.btn.btn-outline-secondary(class=(currentStatus==='inactive'?'active':undefined) data-set="inactive")
+                i.fas.fa-toggle-off.me-1
+                | Dừng hoạt động
+        .mt-3
+          .row.g-2
+            .col-12.col-lg-6
+              form(action="#", method="get", id="search-category")
+                .input-group
+                  span.input-group-text
+                    i.fas.fa-search
+                  input.form-control(type="text", placeholder="Tìm theo tên/slug", name="search", value= keySearch ? keySearch : "")
+                  button.btn.btn-primary(type="submit")
+                    i.fas.fa-magnifying-glass.me-1
+                    | Tìm
+            .col-12.col-lg-6.d-flex.justify-content-lg-end
+              button.btn.btn-success#btn-open-create(type="button" data-bs-toggle="modal" data-bs-target="#modal-category")
+                i.fas.fa-plus.me-1
+                | Thêm danh mục
+
+    // == Split layout
+    .split
+      // ==== Pane trái
+      .pane.pane-left.is-collapsed(data-pane="left")
+        .card.border-0.shadow-sm.h-100
+          .card-header.bg-white.d-flex.align-items-center.justify-content-between
+            span.pane-header-title
+              i.fas.fa-sitemap.me-1
+              | Cây danh mục
+            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="left")
+              | Mở rộng
+          .card-body
+            if tree && tree.length
+              ul.list-group.list-group-flush
+                each node in tree
+                  li.list-group-item
+                    .d-flex.align-items-center.justify-content-between
+                      .cat-node(d-data=node._id role="button" select-category)
+                        i.fas.fa-folder.me-2.text-warning
+                        | #{node.name}
+                        if node.slug
+                          span.slug-muted.ms-2 /#{node.slug}
+                      .d-flex.gap-1
+                        button.btn.btn-sm.btn-outline-primary(title="Thêm con" create-child data-parent=node._id)
+                          i.fas.fa-plus
+                        button.btn.btn-sm.btn-outline-secondary(title="Sửa" edit-node data-id=node._id)
+                          i.fas.fa-pen
+                        button.btn.btn-sm.btn-outline-danger(title="Xóa" delete-node data-id=node._id)
+                          i.fas.fa-trash
+            else
+              .text-muted Chưa có danh mục. Nhấn "Thêm danh mục" để tạo mới.
+
+      // ==== Pane phải
+      .pane.pane-right.is-expanded(data-pane="right")
+        .card.border-0.shadow.h-100
+          .card-header.bg-white.d-flex.align-items-center.justify-content-between
+            span.pane-header-title
+              i.fas.fa-table.me-1
+              | Bảng danh mục
+            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="right")
+              | Mở rộng
+          .card-body
+            // == Hàng công cụ ngang
+            form(
+              action=`/${pathAdmin}/categories/change-multi?_method=PATCH`
+              method="POST"
+              form-change-multi
+              class="mb-3 border-0 shadow-sm card"
+            )
+              .card-body.d-flex.align-items-center.justify-content-between.flex-wrap.gap-2
+                .d-flex.align-items-center.gap-2.flex-wrap
+                  .form-group.mb-0
+                    select(name="type" class="form-control")
+                      option(disabled selected) -- Chọn hành động -- 
+                      option(value="active") Hoạt động
+                      option(value="inactive") Dừng hoạt động
+                      option(value="delete-select") Xóa danh mục
+                      option(value="changel-postion") Thay đổi vị trí
+                  .form-group.mb-0
+                    input(type="text" name="ids" value="" class="form-control" hidden)
+                  button(type="submit" class="btn btn-primary") Áp dụng
+
+                .d-flex.align-items-center.gap-2.flex-wrap.justify-content-lg-end
+                  span.text-muted.small Sắp xếp:
+                  .btn-group#sortGroup(role='group' aria-label='Sắp xếp nhanh')
+                    button.btn.btn-outline-dark(type='button' data-sort='position') Vị Trí
+                    button.btn.btn-outline-dark(type='button' data-sort='new') Mới Nhất
+                    button.btn.btn-outline-dark(type='button' data-sort='quanity') Số Lượng
+                  .dropdown
+                    button#priceToggle.btn.btn-outline-dark.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-expanded='false') Giá
+                    ul#priceMenu.dropdown-menu
+                      li
+                        button.dropdown-item(type='button' data-sort='price_asc') Giá: Thấp đến Cao
+                      li
+                        button.dropdown-item(type='button' data-sort='price_desc') Giá: Cao đến Thấp
+
+            .table-responsive
+              table.table.table-striped.table-hover.mb-0.table-sticky
+                thead
+                  tr
+                    th(style="width:44px")
+                      input(type="checkbox", name="checkall")
+                    th STT
+                    th Tên
+                    th Slug
+                    th Danh mục cha
+                    th Vị trí
+                    th Trạng thái
+                    th Hành động
+                tbody
+                  if categories && categories.length
+                    each item, index in categories
+                      tr
+                        td
+                          input(type="checkbox", name="id", value=item._id, checkItem)
+                        td #{index + 1}
+                        td
+                          .fw-semibold #{item.name}
+                          if item.description
+                            .text #{item.description}
+                        td /#{item.slug}
+                        td #{item.parentName || '—'}
+                        td
+                          input.form-control.form-control-sm(type="number", name="position", style="width:80px", value=item.position)
+                        td
+                          span.badge(
+                            class= item.status === "active" ? "bg-success" : "bg-danger",
+                            role="button",
+                            data-id=item._id,
+                            data-status=item.status,
+                            change-status
+                          ) #{item.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
+                        td
+                          .k-actions.d-flex.flex-wrap
+                            button.btn.btn-outline-secondary.btn-sm(data-id=item._id edit-category)
+                              i.fas.fa-pen.me-1
+                              | Sửa
+                            button.btn.btn-outline-danger.btn-sm(data-id=item._id delete-category)
+                              i.fas.fa-trash.me-1
+                              | Xóa
+                  else
+                    tr
+                      td(colspan="8").text-center.text-muted Không có danh mục phù hợp.
+
+    form(action="", method="POST", form-change, data-path=`/${pathAdmin}/categories/change-status`)
+    form(action="", method="POST", form-delete, data-path=`/${pathAdmin}/categories/delete`)
+    //- form(action=`/${pathAdmin}/categories/change-multi?_method=PATCH`, method="POST", form-change-multi hidden)
+    //-   input(type="text", name="ids", value="")
+
+  .modal.fade#modal-category(tabindex="-1" aria-hidden="true")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title Quản lý danh mục
+          button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+        .modal-body
+          form(id="form-category" method="POST" enctype="multipart/form-data")
+            input(type="hidden", name="_method", value="POST") 
+            input(type="hidden", name="id", value="")
+            .mb-3
+              label.form-label Tên danh mục
+              input.form-control(type="text", name="name", required)
+            .mb-3
+              label.form-label Slug
+              input.form-control(type="text", name="slug", placeholder="vd: thoi-trang-nam")
+              .form-text Tự sinh từ tên nếu để trống (xử lý ở server).
+            .mb-3
+              label.form-label Danh mục cha
+              select.form-select(name="parentId")
+                option(value="") — Root (không có cha) —
+                if allCategories && allCategories.length
+                  each c in allCategories
+                    option(value=c._id) #{c.name}
+            .mb-3
+              label.form-label Mô tả
+              textarea.form-control(name="description", rows="3")
+            .mb-3
+              .form-check.form-switch
+                input.form-check-input(type="checkbox", id="statusSwitch", name="status", checked)
+                label.form-check-label(for="statusSwitch") Hoạt động
+            .mb-3
+              label.form-label Vị trí
+              input.form-control(type="number", name="position", value="0")
+            .mb-3
+              label.form-label Ảnh đại diện
+              input.form-control(type="file", name="thumbnail", accept="image/*")
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Hủy
+          button.btn.btn-primary(type="submit" save-category)
+            i.fas.fa-save.me-1
+            | Lưu lại
+
+block script
+  script(src="/admin/js/handle.change-multi.js")
+  script(src="/admin/js/handle.change-single.js")  
+  script(src="/admin/js/handle.filter-status.js")    
+  script.
+    (function(){
+      const left  = document.querySelector('[data-pane="left"]');
+      const right = document.querySelector('[data-pane="right"]');
+
+      function expand(which){
+        if(!left || !right) return;
+        if(which === 'left'){
+          left.classList.add('is-expanded');   left.classList.remove('is-collapsed');
+          right.classList.add('is-collapsed'); right.classList.remove('is-expanded');
+        }else{
+          right.classList.add('is-expanded');  right.classList.remove('is-collapsed');
+          left.classList.add('is-collapsed');  left.classList.remove('is-expanded');
+        }
+      }
+
+      document.querySelectorAll('.btn-expand[data-expand]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const side = btn.getAttribute('data-expand');
+          if(side === 'left') expand('left'); else expand('right');
+        });
+      });
+    })();

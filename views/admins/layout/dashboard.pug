@@ -1,13 +1,46 @@
-doctype html 
-html
-    head 
-        title #{title}
-        link(href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous")
-    body 
-        include ../partials/header.pug
-        .slide
+doctype html
+html(lang="vi")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    title #{title}
+    // CSS vendor
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css", integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr", crossorigin="anonymous")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/css/iziToast.min.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css")
+
+    // Optional: style nhỏ để sidebar dính trái và full-height
+    style.
+      html, body { height: 100%; }
+      #admin-sidebar .sidebar-inner {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      #admin-main .main-inner { min-height: 100vh; }
+
+    block head
+
+  body
+    // Header (chỉ là header của body)
+    include ../partials/header.pug
+
+    // Layout 2 cột: Sidebar trái (dính), Content phải
+    .container-fluid.p-0
+      .row.g-0
+        // Sidebar
+        aside#admin-sidebar.col-12.col-md-3.col-lg-2.bg-light.border-end
+          .sidebar-inner
             include ../partials/slide.pug
-        main
-            block main 
-        block script 
-        script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous")
+
+        // Main content
+        main#admin-main.col-12.col-md-9.col-lg-10
+          .main-inner.p-3
+            block main
+
+    // Scripts
+    script(src="https://cdn.jsdelivr.net/npm/izitoast@1.4.0/dist/js/iziToast.min.js")
+    script(src="/admin/js/toast.js")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js", integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q", crossorigin="anonymous")
+    block script
