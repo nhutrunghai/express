@@ -1,0 +1,82 @@
+
+mixin CategoryTree(nodes, depth = 0)
+  // CSS/JS chỉ inject 1 lần ở depth 0
+  if depth === 0
+    style.
+      .tree-toggle{width:1rem;line-height:1;cursor:pointer}
+      .tree-caret{display:inline-block;width:1rem;text-align:center}
+      .tree-name{user-select:none}
+      .tree-children{margin-top:.25rem}
+      .list-group.list-group-flush .list-group-item{border-left:0;border-right:0}
+      .list-group-nested{margin-left:1rem}
+
+  if nodes && nodes.length
+    if depth === 0
+      ul.list-group.list-group-flush
+        each it in nodes
+          - const hasChild = !!(it.children && it.children.length)
+          li.list-group-item(data-id=it._id)
+            .d-flex.align-items-center.gap-2
+              if hasChild
+                button.btn.btn-sm.p-0.border-0.bg-transparent.tree-toggle(type="button" aria-expanded="true")
+                  span.tree-caret ▼
+              else
+                span.tree-caret &nbsp;
+
+              // DÙNG it.title (KHÔNG phải it.name)
+              span.tree-name(
+                class= it.status === 'inactive' ? 'text-muted' : ''
+                role="button"
+                select-category
+                data-id=it._id
+              )= it.title
+
+              if it.slug
+                span.ms-2.text-muted.small /#{it.slug}
+
+            if hasChild
+              .tree-children
+                +CategoryTree(it.children, depth + 1)
+    else
+      ul.list-group.list-group-flush.list-group-nested
+        each it in nodes
+          - const hasChild = !!(it.children && it.children.length)
+          li.list-group-item(data-id=it._id)
+            .d-flex.align-items-center.gap-2
+              if hasChild
+                button.btn.btn-sm.p-0.border-0.bg-transparent.tree-toggle(type="button" aria-expanded="true")
+                  span.tree-caret ▼
+              else
+                span.tree-caret &nbsp;
+
+              // DÙNG it.title
+              span.tree-name(
+                class= it.status === 'inactive' ? 'text-muted' : ''
+                role="button"
+                select-category
+                data-id=it._id
+              )= it.title
+
+              if it.slug
+                span.ms-2.text-muted.small /#{it.slug}
+
+            if hasChild
+              .tree-children
+                +CategoryTree(it.children, depth + 1)
+
+  if depth === 0
+    script.
+      (function(){
+        if(window.__TreeBound) return; window.__TreeBound = true;
+        document.addEventListener('click', function(e){
+          var btn = e.target.closest('.tree-toggle');
+          if(!btn) return;
+          var li = btn.closest('li');
+          var wrap = li && li.querySelector(':scope > .tree-children');
+          var caret = btn.querySelector('.tree-caret');
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+          if (wrap) wrap.classList.toggle('d-none', expanded);
+          if (caret) caret.textContent = expanded ? '▶' : '▼';
+        });
+      })();

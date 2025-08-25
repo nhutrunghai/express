@@ -1,0 +1,61 @@
+extends ../../layout/dashboard.pug
+
+block main
+  .container-fluid
+    .row
+      .col-md-12
+        .card
+          .card-body
+            h5.card-title Danh sách tài khoản
+            //- Tìm kiếm
+            .form-group
+              label(for="search") Tìm kiếm
+              input#search.form-control(type="text" placeholder="Tìm kiếm...")
+            //- Bảng danh sách tài khoản
+            table.table.table-striped.mt-4
+              thead
+                tr
+                  th Nhóm quyền
+                  th Mô tả ngắn
+                  th Hành động
+              tbody
+                
+                each role of roles
+                  tr
+                    td #{role.title}
+                    td #{role.description}
+                    td
+                      input(type="checkbox")
+                      a.btn.btn-warning.ml-4(href="#") Sửa
+                      a.btn.btn-danger.ml-4(href="#") Xóa
+
+
+            //- Nút thêm mới và xóa tất cả
+            .d-flex.mt-3
+              a.btn.btn-primary.mr-3(href="#" data-toggle="modal" data-target="#addRoleModal") + Thêm mới
+              a.btn.btn-danger.mr-3(href="#") Xóa tất cả
+
+            //- Modal thêm mới nhóm quyền
+            .modal.fade#addRoleModal(tabindex="-1" role="dialog" aria-labelledby="addRoleModalLabel" aria-hidden="true")
+              .modal-dialog.modal-lg(role="document")
+                .modal-content
+                  .modal-header
+                    h5.modal-title#addRoleModalLabel Thêm nhóm quyền mới
+                  .modal-body
+                    //- Thêm thẻ form để xử lý dữ liệu
+                    form(action="#" method="POST")
+                      .form-group
+                        label(for="title") Tên nhóm quyền
+                        input#title.form-control(type="text" name="title" placeholder="Nhập tên nhóm quyền" required)
+                      .form-group
+                        label(for="description") Mô tả ngắn
+                        textarea#description.form-control(name="description" rows="4" placeholder="Nhập mô tả nhóm quyền" required)
+                      .modal-footer
+                        button.btn.btn-secondary(type="button" data-dismiss="modal") Hủy
+                        button.btn.btn-primary(type="submit") Tạo
+
+
+block script 
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

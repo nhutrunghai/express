@@ -1,5 +1,8 @@
-extend ../../layout/dashboard.pug
+extends ../../layout/dashboard.pug
 include ../../mixins/toast.pug
+include ../../mixins/categorys.pug
+include ../../mixins/categorys-tree.pug
+
 block main
   style.
     .toolbar-sticky { position: sticky; top: 0; z-index: 101; }
@@ -36,7 +39,7 @@ block main
       .pane, .pane.is-expanded, .pane.is-collapsed { flex: 1 1 auto; max-width: 100%; }
       .pane .card-body { display: block; }
     }
-  
+
   .container.mt-4
     +Toast(messages)
     // == Toolbar trên cùng
@@ -80,26 +83,10 @@ block main
             span.pane-header-title
               i.fas.fa-sitemap.me-1
               | Cây danh mục
-            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="left")
-              | Mở rộng
+            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="left") Mở rộng
           .card-body
-            if tree && tree.length
-              ul.list-group.list-group-flush
-                each node in tree
-                  li.list-group-item
-                    .d-flex.align-items-center.justify-content-between
-                      .cat-node(d-data=node._id role="button" select-category)
-                        i.fas.fa-folder.me-2.text-warning
-                        | #{node.name}
-                        if node.slug
-                          span.slug-muted.ms-2 /#{node.slug}
-                      .d-flex.gap-1
-                        button.btn.btn-sm.btn-outline-primary(title="Thêm con" create-child data-parent=node._id)
-                          i.fas.fa-plus
-                        button.btn.btn-sm.btn-outline-secondary(title="Sửa" edit-node data-id=node._id)
-                          i.fas.fa-pen
-                        button.btn.btn-sm.btn-outline-danger(title="Xóa" delete-node data-id=node._id)
-                          i.fas.fa-trash
+            if TreeCategotys && TreeCategotys.length
+              +CategoryTree(TreeCategotys)    // truyền cây đã build (children[])
             else
               .text-muted Chưa có danh mục. Nhấn "Thêm danh mục" để tạo mới.
 
@@ -110,8 +97,7 @@ block main
             span.pane-header-title
               i.fas.fa-table.me-1
               | Bảng danh mục
-            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="right")
-              | Mở rộng
+            button.btn.btn-sm.btn-outline-secondary.btn-expand(type="button" data-expand="right") Mở rộng
           .card-body
             // == Hàng công cụ ngang
             form(
@@ -130,7 +116,7 @@ block main
                       option(value="delete-select") Xóa danh mục
                       option(value="changel-postion") Thay đổi vị trí
                   .form-group.mb-0
-                    input(type="text" name="ids" value="" class="form-control" hidden)
+                    input(type="text", name="ids", value="" class="form-control" hidden)
                   button(type="submit" class="btn btn-primary") Áp dụng
 
                 .d-flex.align-items-center.gap-2.flex-wrap.justify-content-lg-end
@@ -161,92 +147,22 @@ block main
                     th Trạng thái
                     th Hành động
                 tbody
+                  - var __row = 0
+                  - var __rowMap = {}
                   if categories && categories.length
-                    each item, index in categories
-                      tr
-                        td
-                          input(type="checkbox", name="id", value=item._id, checkItem)
-                        td #{index + 1}
-                        td
-                          .fw-semibold #{item.name}
-                          if item.description
-                            .text #{item.description}
-                        td /#{item.slug}
-                        td #{item.parentName || '—'}
-                        td
-                          input.form-control.form-control-sm(type="number", name="position", style="width:80px", value=item.position)
-                        td
-                          span.badge(
-                            class= item.status === "active" ? "bg-success" : "bg-danger",
-                            role="button",
-                            data-id=item._id,
-                            data-status=item.status,
-                            change-status
-                          ) #{item.status === "active" ? "Hoạt động" : "Dừng hoạt động"}
-                        td
-                          .k-actions.d-flex.flex-wrap
-                            button.btn.btn-outline-secondary.btn-sm(data-id=item._id edit-category)
-                              i.fas.fa-pen.me-1
-                              | Sửa
-                            button.btn.btn-outline-danger.btn-sm(data-id=item._id delete-category)
-                              i.fas.fa-trash.me-1
-                              | Xóa
+                    +categoryRows(categories)
                   else
                     tr
                       td(colspan="8").text-center.text-muted Không có danh mục phù hợp.
 
     form(action="", method="POST", form-change, data-path=`/${pathAdmin}/categories/change-status`)
-    form(action="", method="POST", form-delete, data-path=`/${pathAdmin}/categories/delete`)
-    //- form(action=`/${pathAdmin}/categories/change-multi?_method=PATCH`, method="POST", form-change-multi hidden)
-    //-   input(type="text", name="ids", value="")
+    //- form(action=`/${pathAdmin}/categories/delete`, method="POST", form-delete)
 
-  .modal.fade#modal-category(tabindex="-1" aria-hidden="true")
-    .modal-dialog
-      .modal-content
-        .modal-header
-          h5.modal-title Quản lý danh mục
-          button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
-        .modal-body
-          form(id="form-category" method="POST" enctype="multipart/form-data")
-            input(type="hidden", name="_method", value="POST") 
-            input(type="hidden", name="id", value="")
-            .mb-3
-              label.form-label Tên danh mục
-              input.form-control(type="text", name="name", required)
-            .mb-3
-              label.form-label Slug
-              input.form-control(type="text", name="slug", placeholder="vd: thoi-trang-nam")
-              .form-text Tự sinh từ tên nếu để trống (xử lý ở server).
-            .mb-3
-              label.form-label Danh mục cha
-              select.form-select(name="parentId")
-                option(value="") — Root (không có cha) —
-                if allCategories && allCategories.length
-                  each c in allCategories
-                    option(value=c._id) #{c.name}
-            .mb-3
-              label.form-label Mô tả
-              textarea.form-control(name="description", rows="3")
-            .mb-3
-              .form-check.form-switch
-                input.form-check-input(type="checkbox", id="statusSwitch", name="status", checked)
-                label.form-check-label(for="statusSwitch") Hoạt động
-            .mb-3
-              label.form-label Vị trí
-              input.form-control(type="number", name="position", value="0")
-            .mb-3
-              label.form-label Ảnh đại diện
-              input.form-control(type="file", name="thumbnail", accept="image/*")
-        .modal-footer
-          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Hủy
-          button.btn.btn-primary(type="submit" save-category)
-            i.fas.fa-save.me-1
-            | Lưu lại
 
 block script
   script(src="/admin/js/handle.change-multi.js")
-  script(src="/admin/js/handle.change-single.js")  
-  script(src="/admin/js/handle.filter-status.js")    
+  script(src="/admin/js/handle.change-single.js")
+  script(src="/admin/js/handle.filter-status.js")
   script.
     (function(){
       const left  = document.querySelector('[data-pane="left"]');

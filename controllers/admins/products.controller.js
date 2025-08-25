@@ -15,7 +15,7 @@ module.exports.products = async (req, res) => {
   }
   // Crate Obj Products
   const ObjProdcuts = {
-    setQuantityItem: 6 /*Số lượng item hiển thị trong mỗi page*/,
+    setQuantityItem: 10 /*Số lượng item hiển thị trong mỗi page*/,
     currentPage: queryPage ? parseInt(queryPage) : 1 /*Hiển thị page hiện tại*/,
   };
   ObjProdcuts.skipPage =

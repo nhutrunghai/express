@@ -1,0 +1,22 @@
+extends ../../layout/dashboard.pug
+block main
+  .container-fluid
+    .row
+      .col-md-12
+        .sidebar
+          .nav
+            //- Nhóm Tiền tệ
+            li.nav-item
+              a.nav-link(href="#") Tiền tệ
+              ul.nav
+                li.nav-item: a.nav-link(href="#") Thiết lập tiền tệ của hệ thống
+                li.nav-item: a.nav-link(href="#") Cấu hình công thanh toán
+
+            //- Nhóm Tài khoản
+            li.nav-item
+              a.nav-link(href="#") Tài khoản
+              ul.nav
+                li.nav-item: a.nav-link(href="./roles") Nhóm quyền
+                li.nav-item: a.nav-link(href="#") Phân quyền
+
+

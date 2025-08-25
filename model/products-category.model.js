@@ -19,7 +19,7 @@ const ProductCategorysSchema = new Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, versionKey: false }
 );
 const ProductCategory = mongoose.model(
   "Products-Categorys",
