@@ -1,0 +1,95 @@
+extends ../../layout/dashboard.pug
+block main
+    h1 Phân quyền
+    
+    table.table.table-bordered.table-permission
+        thead
+            tr
+                th Tính năng
+                each role of roles
+                    th #{role.title}
+        tbody
+            tr 
+                td 
+                    strong Danh mục sản phẩm
+            tr(hidden)
+                td 
+                each role of roles
+                    td  
+                        input(type="text" value = role._id)
+            tr(data-name="products-category-view")
+                td Xem
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-category-view"))
+            tr(data-name="products-category-create")
+                td Thêm mới
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-category-create"))
+            tr(data-name="products-category-edit")
+                td Chỉnh sửa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-category-edit"))
+            tr(data-name="products-category-delete")
+                td Xóa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-category-delete"))
+            tr 
+                td 
+                    strong Sản phẩm
+            tr(data-name="products-view")
+                td Xem
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-view"))
+            tr(data-name="products-create")
+                td Thêm mới
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-create"))
+            tr(data-name="products-edit")
+                td Chỉnh sửa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-edit"))
+            tr(data-name="products-delete")
+                td Xóa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("products-delete"))
+            tr 
+                td 
+                    strong Nhóm Quyền
+            tr(data-name="roles-view")
+                td Xem
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("roles-view"))
+            tr(data-name="roles-create")
+                td Thêm mới
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("roles-create"))
+            tr(data-name="roles-edit")
+                td Chỉnh sửa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("roles-edit"))
+            tr(data-name="roles-delete")
+                td Xóa
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("roles-delete"))
+            tr(data-name="roles-permissions")
+                td Phân quyền
+                each role of roles
+                    td
+                        input.form-check-input(type="checkbox" checked = role.permission.includes("roles-permissions"))
+    button.btn.btn-primary.mt-3.btn-update Cập nhật
+    form(action=`/${pathAdmin}/permissions?_method=PATCH` method = "POST" form-update-permissions hidden)
+        input(type="text" name = 'permissions') 
+block script 
+    script(src="/admin/js/permissions.js") 

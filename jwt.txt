@@ -1,0 +1,90 @@
+JWT là gì ?
+JWT là viết tắt JSON WEB TOKEN là tiêu chuẩn xác thực và truyền dữ liệu an hoàn bên trong 1 hệ thống
+hoạt động trên cơ chế mã hóa dữ liệu để đảm bảo những bên có quyền mới có thể đọc hoặc xác minh 
+nội dung của TOKEN
+JWS gồm 3 thành phần chính : header,payload,signature được nối với nhau bằng dấu chấm 
+ex: <Header>.<Payload>.<Signature>
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2MjM0MjkwNTMiLCJpYXQiOjE2MjY0MTAwM30.XbPfblHMI6arZ3Y922BhjWgQzWXcXNrz0ogtVhfEd2o
+
++ <Header> :
+{
+    "alg": "HS246" -> mã hóa
+    "typ": "JWT" -> loại token
+}
++ <Payload> :
+{
+    "sub": "1234567890" -> Đây là claim "subject" (chủ thể), xác định người dùng chính của JWT. Trong trường hợp này, đó là một ID số.
+    "name": "George White" ->  Đây là một claim tùy chỉnh biểu thị tên của người dùng.
+    "admin": true -> Đây là một claim tùy chỉnh khác, có thể cho biết người dùng "George White" có quyền quản trị.
+    "iat": 1516239022: Đây là claim "issued at" (thời gian phát hành), cho biết thời điểm JWT được phát hành. Giá trị 1516239022 là một dấu thời gian Unix, tương đương với 17 tháng 1 năm 2018, 08:10:22 GMT
+}
++ <Signature> :
+Base64URLSafe(
+HMACSHA256(<header> . <payload>, <secret key>)
+))
+-> được tạo bằng cách mã hóa header,payload và 1 khóa bí mật
+HMACSHA256(<header> . <payload>, <secret key>):
+
+HMACSHA256: Điều này chỉ định hàm băm mật mã được sử dụng, đó là HMAC (Mã xác thực thông điệp dựa trên khóa) với SHA-256. Thuật toán này được sử dụng để tạo mã xác thực thông điệp (MAC) bằng cách sử dụng một khóa bí mật.
+<header> . <payload>: Điều này đại diện cho dữ liệu đang được ký. Đó là sự nối tiếp của tiêu đề đã được mã hóa và payload đã được mã hóa của token, được phân tách bằng dấu chấm (.).
+<secret key>: Đây là một khóa bí mật mà chỉ người gửi và người nhận mới biết, và nó rất cần thiết để xác minh tính toàn vẹn và xác thực của token.
+Base64URLSafe(...): Sau khi hàm băm HMAC-SHA256 được tính toán, chữ ký nhị phân kết quả sau đó được mã hóa bằng cách sử dụng mã hóa Base64 URL-safe. Mã hóa này đảm bảo rằng chữ ký có thể được truyền an toàn trong các URL mà không yêu cầu mã hóa URL bổ sung.
+jWt có thể bị decode
+
+1. HMACSHA256 là gì?
+
+HMACSHA256 (HMAC - Hash-based Message Authentication Code, sử dụng thuật toán SHA256) là một phương thức mã hóa dùng để tạo chữ ký bảo mật cho một thông điệp, kết hợp giữa một khóa bí mật và hash của thông điệp đó.
+
+Cách thức hoạt động của HMACSHA256:
+
+HMAC là một phương thức hashing kết hợp giữa khóa bí mật và mã băm (hash) của thông điệp. Trong trường hợp của JWT, thông điệp là sự kết hợp của header và payload (được mã hóa).
+
+SHA256 là một thuật toán băm một chiều (one-way hash function) và trả về một mã băm có độ dài cố định (256 bit).
+
+Cách HMACSHA256 hoạt động trong JWT:
+
+Đầu tiên, bạn kết hợp header và payload của JWT bằng dấu chấm (.) như sau: <header>.<payload>.
+
+Sau đó, bạn áp dụng SHA256 trên kết hợp này để tạo ra một hash (mã băm).
+
+Tiếp theo, bạn sử dụng khóa bí mật và HMACSHA256 để tạo ra một giá trị chữ ký.
+
+2. Base64URLSafe là gì?
+
+Base64URLSafe là một biến thể của Base64, một phương pháp mã hóa dữ liệu nhị phân (binary data) thành chuỗi văn bản (text). Base64URLSafe được sử dụng trong JWT vì Base64 chuẩn có một số ký tự đặc biệt (như + và /) mà không an toàn khi sử dụng trong URL. Base64URLSafe thay thế các ký tự này để đảm bảo an toàn khi truyền qua URL.
+
+Cách thức hoạt động của Base64URLSafe:
+
+Base64 được sử dụng để mã hóa dữ liệu nhị phân (ví dụ: chuỗi JSON của header và payload) thành một chuỗi văn bản có thể truyền tải qua HTTP headers hoặc URL. Tuy nhiên, có sự khác biệt giữa Base64 chuẩn và Base64URLSafe:
+
+Base64 chuẩn:
+
+Sử dụng + thay thế cho -.
+
+Sử dụng / thay thế cho _.
+
+Kết quả mã hóa sẽ có dấu = ở cuối chuỗi (padding).
+
+Base64URLSafe:
+
+Thay thế + bằng -.
+
+Thay thế / bằng _.
+
+Không có padding (=) ở cuối chuỗi.
+---
+Ưu điểm:
+
+Không cần lưu trữ phiên trên máy chủ: Điều này giúp giảm tải tài nguyên cho máy chủ.
+Có thể sử dụng trên nhiều nền tảng: Dễ dàng tích hợp vào API và ứng dụng di động.
+Dữ liệu có thể được mã hóa: Giúp tăng cường bảo mật.
+Nhược điểm:
+
+Nếu JWT bị đánh cắp, kẻ tấn công có thể mạo danh.
+Không giống như xác thực dựa trên phiên (session-based authentication), bạn không thể xóa JWT khỏi máy chủ một cách đơn giản.
+Cách khắc phục: Sử dụng refresh token và đưa các token đã bị thu hồi vào danh sách đen (blacklist).
+JWT có thể trở nên lớn nếu chứa quá nhiều thông tin, dẫn đến giảm hiệu suất yêu cầu.
+Cách khắc phục: Chỉ lưu trữ thông tin quan trọng trong payload.
+
+---------------------
+http only cookie
