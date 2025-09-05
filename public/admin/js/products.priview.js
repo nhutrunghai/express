@@ -1,5 +1,5 @@
 const previewWrap = document.querySelector(".preview-wrap");
-const inputFile = document.querySelector("input[name='thumbnail']");
+const inputFile = document.querySelector("input[accept='image/*']");
 const deleImage = previewWrap.querySelector("button");
 const imgPriview = previewWrap.querySelector("img");
 function setBtnDelete(status = true) {

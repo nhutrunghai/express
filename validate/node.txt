@@ -1,0 +1,2 @@
+Thông thường validate chỉ check kiểm tra xem trường đó cần nhập không được bỏ
+trống chứ ko phải check đúg sai 

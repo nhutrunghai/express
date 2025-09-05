@@ -1,0 +1,47 @@
+extends ../../layout/dashboard.pug
+
+block main
+  .container.mt-5
+    h1 Quản trị người dùng
+
+    //- Nút Thêm mới
+    a.btn.btn-primary(href=`./users/create`) Thêm mới
+
+    //- Bảng danh sách người dùng
+    table.table.table-striped.mt-4
+      thead
+        tr
+          th STT
+          th Tên
+          th Email
+          th Quyền
+          th Trạng thái
+          th Thao tác
+      tbody
+        tr
+          td 1
+          td Nguyễn Văn A
+          td  a@example.com
+          td Quản trị viên
+          td Hoạt động
+          td
+            a.btn.btn-warning(href='/user/edit/1') Chỉnh sửa
+            a.btn.btn-danger.ml-2(href='/user/delete/1') Xóa
+        tr
+          td 2
+          td Trần Thị B
+          td  b@example.com
+          td Người dùng
+          td Khóa
+          td
+            a.btn.btn-warning(href='/user/edit/2') Chỉnh sửa
+            a.btn.btn-danger.ml-2(href='/user/delete/2') Xóa
+        tr
+          td 3
+          td Lê Minh C
+          td  c@example.com
+          td Người dùng
+          td Hoạt động
+          td
+            a.btn.btn-warning(href='/user/edit/3') Chỉnh sửa
+            a.btn.btn-danger.ml-2(href='/user/delete/3') Xóa
