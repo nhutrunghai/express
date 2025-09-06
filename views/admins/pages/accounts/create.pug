@@ -65,9 +65,10 @@ block main
               .mb-3
                 label.form-label(for='role_id') Vai trò
                 select#role_id.form-select(name='role_id')
-                  option(value='') -- Chọn vai trò --
-                  option(value='admin') Quản trị viên
-                  option(value='user') Người dùng
+                  option(value='' selected ) -- Chọn vai trò --
+                  option(value='') Người dùng
+                  each role of roles
+                    option(value=role._id) #{role.title}
               .mb-3
                 label.form-label(for='status') Trạng thái
                 .input-group

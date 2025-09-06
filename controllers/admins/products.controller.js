@@ -130,7 +130,7 @@ module.exports.editUpadte = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.stock = parseInt(req.body.stock);
   req.body.position = parseInt(req.body.position);
-  console.log(req.file);
+
 
   if (req.file) {
     req.body.thumbnail = `/uploads/${req.file.filename}`;

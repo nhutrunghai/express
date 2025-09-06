@@ -1,0 +1,45 @@
+req.body: Chứa dữ liệu gửi trong thân yêu cầu (thường dùng trong POST/PUT).
+
+req.params: Chứa các tham số URL trong đường dẫn (route params).
+
+req.query: Chứa các tham số truy vấn trong query string của URL.
+
+req.headers: Chứa các header của yêu cầu.
+
+req.method: Trả về phương thức HTTP của yêu cầu (GET, POST, v.v.).
+
+req.url: Trả về URL đầy đủ của yêu cầu (bao gồm đường dẫn và query string).
+
+req.originalUrl: Trả về URL gốc của yêu cầu, không bị thay đổi bởi middleware.
+
+req.cookies: Chứa các cookies gửi kèm trong yêu cầu (yêu cầu middleware cookie-parser).
+
+req.fresh: Xác định xem yêu cầu có còn mới không (sử dụng cùng với cache).
+
+req.stale: Xác định xem yêu cầu đã cũ hay không (sử dụng cùng với cache).
+
+req.xhr: Trả về true nếu yêu cầu là Ajax (XMLHttpRequest).
+
+req.accepts(): Kiểm tra kiểu nội dung mà client có thể xử lý (ví dụ: json, html).
+
+req.is(): Kiểm tra kiểu MIME của yêu cầu.
+
+req.protocol: Trả về giao thức của yêu cầu (http hoặc https).
+
+req.hostname: Trả về tên miền của yêu cầu.
+
+req.ip: Trả về địa chỉ IP của client.
+
+req.secure: Trả về true nếu yêu cầu sử dụng HTTPS.
+
+Các Phương Thức (req Methods):
+
+req.get(): Truy xuất giá trị của một header yêu cầu.
+
+req.param(): Lấy tham số từ URL, query string, hoặc body (tính năng cũ, không khuyến khích sử dụng).
+
+req.route: Trả về thông tin về route hiện tại (chỉ có khi route đã được matched).
+
+req.app: Trả về ứng dụng Express hiện tại.
+
+Đây là các thuộc tính và phương thức chính mà bạn có thể sử dụng khi làm việc với đối tượng req trong Express.

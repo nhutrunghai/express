@@ -7,7 +7,7 @@ module.exports.index = async (req,res) => {
 // [POST] "/"
 module.exports.createRole = async (req,res) => {
     const body = req.body
-    console.log({body});
+
     
     await databaseRoles.create(body)
     res.redirect(req.get('Referer'))
