@@ -44,47 +44,50 @@ style.
 
 nav#admin-sidebar-nav.nav.flex-column.p-3
   // Dashboard
-  a.nav-link.menu-item(href="/admin/dashboard", class=(activePage === 'dashboard' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/dashboard`, class=(activePage === 'dashboard' ? 'active' : ''))
     i.bi.bi-speedometer2.me-2
     span Dashboard
 
   // Quản lý sản phẩm
-  h6.text-muted.section-title.mt-3.mb-2 Quản lý sản phẩm
-  a.nav-link.menu-item(href="/admin/products", class=(activePage === 'products' ? 'active' : ''))
-    i.bi.bi-box-seam.me-2
-    span Danh sách sản phẩm
-  a.nav-link.menu-item(href="/admin/categories", class=(activePage === 'categories' ? 'active' : ''))
-    i.bi.bi-tags.me-2
-    span Danh mục sản phẩm
+  if( user.role_id.permission.includes('products-view') || user.role_id.permission.includes('products-category-view') )
+    h6.text-muted.section-title.mt-3.mb-2 Quản lý sản phẩm
+      if( user.role_id.permission.includes('products-view'))
+        a.nav-link.menu-item(href=`/${pathAdmin}/products`, class=(activePage === 'products' ? 'active' : ''))
+          i.bi.bi-box-seam.me-2
+          span Danh sách sản phẩm
+      if( user.role_id.permission.includes('products-category-view'))
+        a.nav-link.menu-item(href=`/${pathAdmin}/categories`, class=(activePage === 'categories' ? 'active' : ''))
+          i.bi.bi-tags.me-2
+          span Danh mục sản phẩm
 
   // Quản lý đơn hàng
   h6.text-muted.section-title.mt-3.mb-2 Quản lý đơn hàng
-  a.nav-link.menu-item(href="/admin/orders", class=(activePage === 'orders' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/orders`, class=(activePage === 'orders' ? 'active' : ''))
     i.bi.bi-cart-check.me-2
     span Đơn hàng
-  a.nav-link.menu-item(href="/admin/customers", class=(activePage === 'customers' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/customers`, class=(activePage === 'customers' ? 'active' : ''))
     i.bi.bi-people.me-2
     span Khách hàng
 
   // Nội dung
   h6.text-muted.section-title.mt-3.mb-2 Nội dung
-  a.nav-link.menu-item(href="/admin/posts", class=(activePage === 'posts' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/posts`, class=(activePage === 'posts' ? 'active' : ''))
     i.bi.bi-file-text.me-2
     span Bài viết / Tin tức
-  a.nav-link.menu-item(href="/admin/banners", class=(activePage === 'banners' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/banners`, class=(activePage === 'banners' ? 'active' : ''))
     i.bi.bi-image.me-2
     span Banner / Quảng cáo
 
   // Hệ thống
   h6.text-muted.section-title.mt-3.mb-2 Hệ thống
-  a.nav-link.menu-item(href="/admin/users", class=(activePage === 'users' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/users`, class=(activePage === 'users' ? 'active' : ''))
     i.bi.bi-person-gear.me-2
     span Quản lý user
-  a.nav-link.menu-item(href="/admin/settings", class=(activePage === 'settings' ? 'active' : ''))
+  a.nav-link.menu-item(href=`/${pathAdmin}/settings`, class=(activePage === 'settings' ? 'active' : ''))
     i.bi.bi-gear.me-2
     span Cấu hình
 
   // Logout
-  a.nav-link.menu-item.mt-4.text-danger(href="/admin/logout")
+  a.nav-link.menu-item.mt-4.text-danger(href=`/${pathAdmin}/auth/logout`)
     i.bi.bi-box-arrow-right.me-2
     span Đăng xuất

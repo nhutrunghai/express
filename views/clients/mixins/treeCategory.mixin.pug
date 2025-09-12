@@ -1,0 +1,44 @@
+
+mixin treeCategory(categorys, flag = false)
+
+  ul(class= flag ? 'dropdown-menu shadow p-1' : 'dropdown-menu p-1')
+    if flag
+      li
+        h6.dropdown-header.my-0.py-2 Danh mục phổ biến
+
+    if Array.isArray(categorys) && categorys.length
+      each category in categorys
+        if category
+          - const hasChildren = Array.isArray(category.children) && category.children.length > 0
+
+          li(class= hasChildren ? 'dropdown-submenu' : '')
+            
+            a.dropdown-item.d-flex.align-items-center.py-2(
+              href=`/product/${category.slug || ''}`
+            )
+              
+              i.bi.bi-phone.me-2
+              | #{category.title || 'Danh mục'}
+              
+              if hasChildren
+                i.bi.bi-chevron-right.small.ms-auto
+
+            if hasChildren
+              +treeCategory(category.children)
+
+    else
+      li
+        span.dropdown-item.text-muted.py-2 (Chưa có danh mục)
+
+    // Nhóm link tĩnh ở CUỐI menu gốc
+    if flag
+      li
+        hr.dropdown-divider.my-2
+      li
+        a.dropdown-item.d-flex.align-items-center.py-2(href="/c/hang-moi")
+          i.bi.bi-stars.me-2
+          | Hàng mới về
+      li
+        a.dropdown-item.d-flex.align-items-center.py-2(href="/c/khuyen-mai")
+          i.bi.bi-tags.me-2
+          | Khuyến mãi

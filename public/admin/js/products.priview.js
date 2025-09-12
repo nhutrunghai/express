@@ -2,6 +2,7 @@ const previewWrap = document.querySelector(".preview-wrap");
 const inputFile = document.querySelector("input[accept='image/*']");
 const deleImage = previewWrap.querySelector("button");
 const imgPriview = previewWrap.querySelector("img");
+const current = previewWrap.querySelector("input[name='current']");
 function setBtnDelete(status = true) {
   deleImage.hidden = status;
 }
@@ -19,4 +20,5 @@ deleImage.onclick = () => {
   imgPriview.src = "";
   setBtnDelete(true);
   inputFile.value = "";
+  current.value = "";
 };

@@ -1,7 +1,9 @@
 extends ../../layouts/default.pug
 include ../../mixins/product.mixin.pug
 block main 
-    h1 Danh sách sản phẩm
-    +mixins-product(products)
+    .container.py-3
+        h1.h4.mb-3.fw-bold.ps-3.border-start.border-4.border-primary.text-dark Danh sách sản phẩm
+        +mixins-product(products)
+        
 
           

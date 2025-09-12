@@ -15,16 +15,16 @@ module.exports.index = async (req, res) => {
     keySearch = querySearch;
     query.title = new RegExp(`^${keySearch}`, "i");
   }
-  const tree = await databaseCategerys.find({}).lean()
+  const tree = await databaseCategerys.find({}).lean();
   const categorys = await databaseCategerys.find(query);
-  
+
   function handleTree(arr, parentID = null) {
     const result = [];
     for (let item of arr) {
       if (_.isEqual(item.parentId, parentID)) {
         const children = handleTree(arr, item._id);
-        if(children.length > 0 ){
-          item.children = children
+        if (children.length > 0) {
+          item.children = children;
         }
         result.push(item);
       }
@@ -32,11 +32,11 @@ module.exports.index = async (req, res) => {
     return result;
   }
   const TreeCategotys = handleTree(tree);
-  
+
   res.render("./admins/pages/categorys/index.pug", {
     title: "Danh mục sản phẩm",
     categories: categorys,
-    TreeCategotys:TreeCategotys,
+    TreeCategotys: TreeCategotys,
   });
 };
 // [PACTH] "/change-multi"

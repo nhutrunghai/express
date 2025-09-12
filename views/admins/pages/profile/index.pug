@@ -1,0 +1,70 @@
+extends ../../layout/dashboard.pug
+
+block main
+  .container.py-3
+    .row
+      .col-md-4
+        .card.shadow-sm
+          .card-body.text-center
+            // Avatar tạm thời là chữ cái đầu
+            .rounded-circle.mx-auto.mb-3(
+              style="width:96px;height:96px;display:flex;align-items:center;justify-content:center;background:#f0f2f5;font-weight:700;font-size:28px;color:#333;"
+            ) 
+              img(src=user.avatar, alt="" style="width:100%;height:100%;border-radius:50%")
+            h5.mb-1 #{user.fullName}
+            
+
+            hr
+            .d-flex.flex-column
+              small.text-muted.mb-1 Email
+              div.mb-2 #{user.email}
+
+              small.text-muted.mb-1 Số điện thoại
+              div.mb-0 #{user.phone}
+
+          .card-footer.bg-white
+            .btn-group.btn-group-sm.w-100
+              a.btn.btn-outline-primary(href="#") Chỉnh sửa
+              a.btn.btn-outline-secondary(href="#") Đổi mật khẩu
+              a.btn.btn-outline-danger(href="#") Đăng xuất
+
+      .col-md-8
+        .card.shadow-sm.mb-3
+          .card-header.bg-white
+            h6.mb-0 Thông tin tài khoản
+          .card-body
+            .row
+              .col-sm-6.mb-3
+                small.text-muted Họ và tên
+                div.font-weight-500 #{user.fullName}
+
+              .col-sm-6.mb-3
+                small.text-muted Email
+                div.font-weight-500 #{user.email}
+
+              .col-sm-6.mb-3
+                small.text-muted Số điện thoại
+                div.font-weight-500 #{user.phone}
+
+              .col-sm-6.mb-3
+                small.text-muted Vai trò
+                div.font-weight-500 #{user.role_id.title}
+
+              .col-sm-6.mb-3
+                small.text-muted Trạng thái
+                div.font-weight-500 Kích hoạt
+
+        .card.shadow-sm
+          .card-header.bg-white
+            h6.mb-0 Nhật ký hệ thống
+          .card-body
+            .row
+              .col-sm-6.mb-3
+                small.text-muted Ngày tạo
+                - const createAt = new Date(user.createdAt).toLocaleString()
+                div #{createAt}
+
+              .col-sm-6.mb-3  
+                - const updatedAt = new Date(user.updatedAt).toLocaleString()
+                small.text-muted Cập nhật lần cuối
+                div #{updatedAt}

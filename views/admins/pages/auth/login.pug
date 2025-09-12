@@ -1,0 +1,89 @@
+//- views/admins/auth/login.pug
+
+doctype html
+html(lang="vi")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    title Đăng nhập quản trị
+
+    // Bootstrap 4 (đồng bộ với markup bên dưới)
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+
+    style.
+      html, body { height: 100%; }
+      body { background:#0f172a; }
+      .auth-card {
+        border:0; border-radius:.75rem;
+        box-shadow:0 10px 30px rgba(0,0,0,.2);
+      }
+
+  body
+
+    .container.d-flex.align-items-center.justify-content-center.min-vh-100
+      .col-12.col-sm-10.col-md-6.col-lg-4
+        .card.auth-card.p-4
+          .text-center.mb-3
+            h1.h5.mb-1 Khu vực Quản trị
+            small.text-muted Đăng nhập để tiếp tục
+
+          //- Flash
+          if messages && messages.error
+            .alert.alert-danger(role="alert")= messages.error
+          if messages && messages.info
+            .alert.alert-info(role="alert")= messages.info
+
+          form#loginForm(method="POST", action=`/${pathAdmin}/auth/login`, novalidate)
+            if csrfToken
+              input(type="hidden", name="_csrf", value=csrfToken)
+
+            .form-group
+              label(for="email") Email hoặc Tên đăng nhập
+              input#email.form-control(type="text", name="email", required, placeholder="admin@example.com")
+              .invalid-feedback Vui lòng nhập email hoặc tên đăng nhập.
+
+            .form-group
+              label(for="password") Mật khẩu
+              .input-group
+                input#password.form-control(type="password", name="password", required, placeholder="••••••••")
+                .input-group-append
+                  button#togglePwd.btn.btn-outline-secondary(type="button", tabindex="-1" aria-label="Hiện/ẩn mật khẩu") 👁️
+              .invalid-feedback Mật khẩu tối thiểu 6 ký tự.
+
+            .form-group.form-check
+              input#remember.form-check-input(type="checkbox", name="remember", value="1")
+              label.form-check-label(for="remember") Ghi nhớ đăng nhập
+
+            button#submitBtn.btn.btn-primary.btn-block(type="submit")
+              span.d-inline-flex.align-items-center
+                span.mr-2 Đăng nhập
+                span.spinner-border.spinner-border-sm.d-none(role="status" aria-hidden="true")
+
+          p.text-center.text-muted.small.mt-3.mb-0 Chỉ dành cho nhân sự được ủy quyền.
+
+    // Scripts (Bootstrap 4)
+    script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+    script.
+      (function(){
+        var form = document.getElementById('loginForm');
+        var btn  = document.getElementById('submitBtn');
+        var spn  = btn && btn.querySelector('.spinner-border');
+        var pwd  = document.getElementById('password');
+        var tog  = document.getElementById('togglePwd');
+
+        form && form.addEventListener('submit', function(e){
+          if (!form.checkValidity()){
+            e.preventDefault(); e.stopPropagation();
+          } else {
+            btn.disabled = true; spn.classList.remove('d-none');
+          }
+          form.classList.add('was-validated');
+        });
+
+        tog && tog.addEventListener('click', function(){
+          var t = pwd.type === 'password' ? 'text' : 'password';
+          pwd.type = t; this.textContent = (t === 'password') ? '👁️' : '🙈';
+        });
+      })();

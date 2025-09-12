@@ -18,11 +18,14 @@ const storage = multer.diskStorage({
   // khi custom thì trường file name ko còn mã hóa như này nữa 2f4b8239dc7ca9d3a469df3b0c3d7ab6
   // mà sẽ do ta quyết định
 });
-const upload = multer({ storage: storage }); /*
-ở đây phải đúng đường dẫn nhé ,vì cấu hình public cho file này rồi nhưng nó chỉ dùng cho file pug
-*/
+const upload = multer({ storage: storage });
 router.get("/", accountController.index);
 router.get("/create", accountController.create);
-router.post("/create",upload.single('avatar'),accountController.createUser);
-router.get("/edit/:id",accountController.edit)
+router.post("/create", upload.single("avatar"), accountController.createUser);
+router.get("/edit/:id", accountController.edit);
+router.patch(
+  "/edit/:id",
+  upload.single("avatar"),
+  accountController.editUpdate
+);
 module.exports = router;

@@ -1,6 +1,6 @@
 extend ../../layout/dashboard.pug 
 include ../../mixins/toast.pug
-
+include ../../mixins/categorys-tree.pug
 block main 
   // Font hiện đại (tùy, có thể bỏ nếu đã có sẵn)
   link(rel="preconnect" href="https://fonts.googleapis.com")
@@ -61,7 +61,25 @@ block main
               .mb-3
                 label.form-label(for='quantity') Số lượng
                 input#quantity.form-control(type='number' min='0' step='1' placeholder='Nhập số lượng' value=product.stock name='stock')
-
+              .mb-3
+                .section-title Sản phẩm nổi bật
+                .mb-2
+                  label(for='featuredTrue') Có
+                  input#featuredTrue(type="radio", name="featured" value='1' checked=product.featured)
+                  label(for='featuredFalse') Không
+                  input#featuredFalse(type="radio", name="featured" value='0' checked=(!product.featured))
+              .mb-3 
+                .section-title Danh mục sản phẩm
+                .mb-3
+                  label.form-label(for='category') Chọn danh mục
+                  select#category.form-select(name='category')
+                    option(value="" disabled selected=(product.category ? false : true)) -- Chọn danh mục --
+                    // Mặc định khi truyền value "" nó sẽ đc lưu vào db là null , nhưng 
+                    // khi muốn lưu null với value "" thì nên disabled vì nếu ko có
+                    // nó sẽ tự lấy text làm value thay cho ""
+                    +CategoryTreeSele(category,product)
+                  .form-hint Chỉ chọn 1 danh mục cho sản phẩm.
+              
           // ===== Hàng 2: Ảnh & Vị trí + Thời gian + Trạng thái
           .row.g-4
             .col-12.col-lg-6
@@ -72,6 +90,7 @@ block main
                 input#image.form-control(type='file' name='thumbnail' accept='image/*')
                 .mt-2.preview-wrap
                   img.thumb-preview(src=product.thumbnail alt='Ảnh hiện tại')
+                  input(hidden type="text", name="current" value=product.thumbnail)
                   button(type='button' class='btn btn-outline-danger btn-sm' remove-image) Xóa ảnh
               // Vị trí
               .mb-3

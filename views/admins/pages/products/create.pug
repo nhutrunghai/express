@@ -1,6 +1,6 @@
 extend ../../layout/dashboard.pug 
 include ../../mixins/toast.pug
-
+include ../../mixins/categorys-tree.pug
 block main 
   // === Font: Inter (biến thể Variable) + tối ưu tải
   link(rel="preconnect" href="https://fonts.googleapis.com")
@@ -70,7 +70,25 @@ block main
               .mb-3
                 label.form-label(for='quantity') Số lượng
                 input#quantity.form-control(type='number' min='0' step='1' placeholder='Nhập số lượng' value='0' name='stock')
-
+              .mb-3
+                .section-title Sản phẩm nổi bật
+                .mb-2
+                  label(for='featuredTrue') Có
+                  input#featuredTrue(type="radio", name="featured" value='1')
+                  label(for='featuredFalse') Không
+                  input#featuredFalse(type="radio", name="featured" value='0' checked)
+              .mb-3 
+                .section-title Danh mục sản phẩm
+                .mb-3
+                  label.form-label(for='category') Chọn danh mục
+                  select#category.form-select(name='category')
+                    option(value="" disabled selected) -- Chọn danh mục --
+                    // Mặc định khi truyền value "" nó sẽ đc lưu vào db là null , nhưng 
+                    // khi muốn lưu null với value "" thì nên disabled vì nếu ko có
+                    // nó sẽ tự lấy text làm value thay cho ""
+                    +CategoryTreeSele(category)
+                  .form-hint Chỉ chọn 1 danh mục cho sản phẩm.
+              
           // ===== Hàng 2: Ảnh & Vị trí + Trạng thái
           .row.g-4
             .col-12.col-lg-6
@@ -87,7 +105,7 @@ block main
                 .input-group
                   input#position.form-control(type='number' name='position' placeholder='Tự động tăng')
                   span.input-group-text Thứ tự
-
+          
             .col-12.col-lg-6
               .section-title Trạng thái hiển thị
               .mb-2

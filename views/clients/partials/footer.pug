@@ -1,2 +1,84 @@
-footer 
-    h1 Footer 
+//- FOOTER trắng (Bootstrap 5 + Icons), nổi với shadow
+footer.footer.bg-white.shadow.mt-5
+  .container.py-5
+    .row.gy-4
+      // Brand + newsletter + social
+      .col-lg-4
+        a.navbar-brand.text-primary.fw-bold(href="/")
+          i.bi.bi-shop.me-2
+          | ShopX
+        p.small.text-secondary.mt-2 Cửa hàng công nghệ & phụ kiện cho mọi nhu cầu mua sắm.
+        form.mt-3
+          label.form-label.small(for="subEmail") Đăng ký nhận tin
+          .input-group.input-group-sm
+            input#subEmail.form-control(type="email", placeholder="Nhập email của bạn")
+            button.btn.btn-primary(type="button")
+              i.bi.bi-send-fill.me-1
+              | Đăng ký
+        .d-flex.gap-2.mt-3
+          a.btn.btn-sm.btn-outline-secondary.rounded-circle(href="#", aria-label="Facebook")
+            i.bi.bi-facebook
+          a.btn.btn-sm.btn-outline-secondary.rounded-circle(href="#", aria-label="Instagram")
+            i.bi.bi-instagram
+          a.btn.btn-sm.btn-outline-secondary.rounded-circle(href="#", aria-label="YouTube")
+            i.bi.bi-youtube
+
+      // Liên kết Sản phẩm
+      .col-6.col-lg-2
+        h6.text-uppercase.small.fw-bold.mb-3.text-body-emphasis Sản phẩm
+        ul.list-unstyled.small.footer-links
+          li: a.link-dark.link-underline-opacity-0(href="/product") Tất cả sản phẩm
+          li: a.link-dark.link-underline-opacity-0(href="/deals") Khuyến mãi
+          li: a.link-dark.link-underline-opacity-0(href="/new") Hàng mới
+          li: a.link-dark.link-underline-opacity-0(href="/c/dien-thoai") Điện thoại
+          li: a.link-dark.link-underline-opacity-0(href="/c/laptop") Laptop
+
+      // Hỗ trợ
+      .col-6.col-lg-2
+        h6.text-uppercase.small.fw-bold.mb-3.text-body-emphasis Hỗ trợ
+        ul.list-unstyled.small.footer-links
+          li: a.link-dark.link-underline-opacity-0(href="/help/how-to-buy") Hướng dẫn mua hàng
+          li: a.link-dark.link-underline-opacity-0(href="/help/shipping") Vận chuyển
+          li: a.link-dark.link-underline-opacity-0(href="/help/returns") Đổi trả & hoàn tiền
+          li: a.link-dark.link-underline-opacity-0(href="/help/warranty") Bảo hành
+          li: a.link-dark.link-underline-opacity-0(href="/faq") Câu hỏi thường gặp
+
+      // Liên hệ + phương thức thanh toán
+      .col-lg-4
+        h6.text-uppercase.small.fw-bold.mb-3.text-body-emphasis Liên hệ
+        ul.list-unstyled.small
+          li.d-flex.align-items-start.mb-2
+            i.bi.bi-geo-alt.me-2.mt-1.text-secondary
+            span 123 Đường ABC, Quận XYZ, TP.HCM
+          li.d-flex.align-items-start.mb-2
+            i.bi.bi-telephone.me-2.mt-1.text-secondary
+            span 0123 456 789
+          li.d-flex.align-items-start.mb-2
+            i.bi.bi-envelope.me-2.mt-1.text-secondary
+            span support@shopx.vn
+        .mt-3
+          span.pay-badge.badge.text-uppercase me-1 Visa
+          span.pay-badge.badge.text-uppercase me-1 Mastercard
+          span.pay-badge.badge.text-uppercase me-1 COD
+          span.pay-badge.badge.text-uppercase me-1 MoMo
+
+  .border-top
+    .container.py-3
+      .d-flex.flex-column.flex-sm-row.align-items-center.justify-content-between.gap-2
+        .small.text-secondary © 2025 ShopX. All rights reserved.
+        .d-flex.align-items-center.gap-3
+          a.small.link-dark.link-underline-opacity-0(href="/policy/privacy") Chính sách bảo mật
+          a.small.link-dark.link-underline-opacity-0(href="/policy/terms") Điều khoản sử dụng
+          a.btn.btn-sm.btn-outline-primary.rounded-pill(href="#top")
+            i.bi.bi-arrow-up-short.me-1
+            | Lên đầu trang
+
+//- Style nhẹ (scoped trong footer)
+style.
+  .footer .footer-links li + li { margin-top: .5rem; }
+  .footer a.link-dark:hover { color: #0d6efd; text-decoration: underline; }
+  .footer .btn-outline-secondary { border-color: #dee2e6; }
+  .footer .btn-outline-secondary:hover { background: #f8f9fa; }
+  .footer .navbar-brand { font-size: 1.25rem; }
+  .footer .rounded-circle { width: 2rem; height: 2rem; display: inline-flex; align-items: center; justify-content: center; }
+  .footer .pay-badge { background: #f8f9fa; border: 1px solid #e9ecef; color: #495057; }

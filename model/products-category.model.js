@@ -6,10 +6,7 @@ const ProductCategorysSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String },
-    price: { type: Number },
     slug: { type: String, slug: "title", unique: true },
-    discountPercentage: { type: Number, default: 0 },
-    stock: { type: Number, default: 0 },
     thumbnail: { type: String },
     status: { type: String, enum: ["active", "inactive"], default: "active" },
     position: { type: Number, default: 0 },

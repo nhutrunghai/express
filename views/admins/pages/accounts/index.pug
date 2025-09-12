@@ -1,9 +1,10 @@
 extends ../../layout/dashboard.pug
-
+include ../../mixins/toast.pug
 block main
+  +Toast(messages)
   .container.mt-5
     h1 Quản trị người dùng
-
+    
     //- Nút Thêm mới
     a.btn.btn-primary(href=`./users/create`) Thêm mới
 
@@ -23,8 +24,8 @@ block main
             td #{index}
             td #{account.fullName}
             td #{account.email}
-            td #{account.role}
+            td #{account.role_id ? account.role_id.title : 'Người dùng' }
             td #{account.status == 'active' ? 'hoạt động' : 'dừng'}
             td
-              a.btn.btn-warning(href=`/user/edit/${account._id}`) Chỉnh sửa
-              a.btn.btn-danger.ml-2(href=`/user/delete/${account._id}`) Xóa
+              a.btn.btn-warning(href=`./users/edit/${account._id}`) Chỉnh sửa
+              a.btn.btn-danger.ml-2(href=`./users/delete/${account._id}`) Xóa

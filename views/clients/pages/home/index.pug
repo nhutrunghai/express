@@ -1,4 +1,9 @@
 extends ../../layouts/default.pug
+include ../../mixins/product.mixin.pug
 block main 
-    h1 Trang chủ
-    img(src="./images/Banner_04_2.png", alt="")
+    .container.py-3
+        h1.h4.mb-3.fw-bold.ps-3.border-start.border-4.border-primary.text-dark Sản phẩm nổi bật
+        +mixins-product(ProductsFeatured)
+        h1.h4.mb-3.fw-bold.ps-3.border-start.border-4.border-primary.text-dark Sản phẩm mới
+        +mixins-product(ProductsNew)
+        

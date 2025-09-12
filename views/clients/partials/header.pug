@@ -1,2 +1,94 @@
-header 
-    h1 Header 
+include ../mixins/treeCategory.mixin.pug
+
+header
+
+  nav.navbar.navbar-expand-lg.bg-white.shadow-sm
+    .container
+      a.navbar-brand.text-primary.fw-bold(href="#")
+        i.bi.bi-shop.me-1
+        | ShopX
+      button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav")
+        span.navbar-toggler-icon
+      #mainNav.collapse.navbar-collapse.align-items-center
+        // menu trái
+        ul.navbar-nav.me-auto
+          li.nav-item
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/")
+              i.bi.bi-house.me-2
+              | Trang chủ
+
+          li.nav-item
+            // Sản phẩm
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/product")
+              i.bi.bi-box-seam.me-2
+              | Sản phẩm
+              
+            // submenu phân cấp hiển thị khi hover vào "Sản phẩm"
+            +treeCategory(category,true)
+          // các mục e-commerce hay dùng (chưa đăng nhập)
+          li.nav-item
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/deals")
+              i.bi.bi-tags.me-2
+              | Khuyến mãi
+          li.nav-item
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/new")
+              i.bi.bi-stars.me-2
+              | Hàng mới
+          li.nav-item
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/blog")
+              i.bi.bi-journal-text.me-2
+              | Blog
+          li.nav-item
+            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/contact")
+              i.bi.bi-telephone.me-2
+              | Liên hệ
+
+        // menu phải
+        ul.navbar-nav.ms-auto
+          li.nav-item
+            a.nav-link.text-dark.d-flex.align-items-center(href="#")
+              i.bi.bi-box-arrow-in-right.me-1
+              | Đăng nhập
+          li.nav-item
+            a.nav-link.text-dark.d-flex.align-items-center(href="#")
+              i.bi.bi-person-plus.me-1
+              | Đăng ký
+
+  // CSS chỉ thêm – không đổi cấu trúc
+  style.
+    /* khoảng cách logo – menu trái */
+    @media (min-width: 992px) {
+      .navbar .navbar-nav.me-auto { margin-left: 1.25rem; }
+    }
+
+    /* dropdown mở khi hover + cầu nối */
+    .navbar .nav-item { position: relative; }
+    .navbar .nav-item:hover > .dropdown-menu { display: block; }
+    .navbar .nav-item > .dropdown-menu:hover { display: block; }
+    .navbar .dropdown-menu { margin-top: 0; box-shadow:0 .5rem 1rem rgba(0,0,0,.08); }
+    .navbar .nav-item:hover::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0;
+      top: 100%;
+      height: 10px;
+      background: transparent;
+    }
+
+    /* MULTI-LEVEL DROPDOWN (flyout) */
+    .navbar .dropdown-submenu { position: relative; }
+    .navbar .dropdown-submenu > .dropdown-menu {
+      top: 0; left: 100%;
+      margin-left: .15rem;
+      display: none;
+      min-width: 12rem;
+    }
+    .navbar .dropdown-submenu:hover > .dropdown-menu { display: block; }
+    .navbar .dropdown-submenu:hover::after {
+      content:""; position:absolute; top:0; left:100%;
+      width: 10px; height: 100%; background: transparent;
+    }
+
+    /* tinh chỉnh icon */
+    .navbar .nav-link i { font-size: 1rem; }
+    

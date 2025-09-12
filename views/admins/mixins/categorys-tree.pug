@@ -80,3 +80,8 @@ mixin CategoryTree(nodes, depth = 0)
           if (caret) caret.textContent = expanded ? '▶' : '▼';
         });
       })();
+mixin CategoryTreeSele(nodes,product=null,prefix = '')
+  each node in nodes 
+    option(value=node._id selected=(product ? (node._id.equals(product.category) ? true : false) : false)) #{prefix}#{node.title}
+    if(node.children && node.children.length > 0)
+      +CategoryTreeSele(node.children,product, prefix + '— ')

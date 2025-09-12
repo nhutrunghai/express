@@ -2,6 +2,9 @@ const { system } = require("../../config/system");
 const databaseProducts = require("../../model/product.model");
 const changeMultiHelper = require("../../helpers/change-multi.helper");
 const changeSingleHelper = require("../../helpers/change-single.helper");
+const treeCategotys = require("../../helpers/treeCategory.helper");
+const databaseCategerys = require("../../model/products-category.model");
+
 module.exports.products = async (req, res) => {
   let keySearch = "";
   const query = { deleted: false };
@@ -83,9 +86,12 @@ module.exports.deleteItem = async (req, res) => {
 };
 
 // [GET] "/create"
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+  const tree = await databaseCategerys.find({}).lean();
+  const category = treeCategotys(tree);
   res.render("./admins/pages/products/create.pug", {
     title: "Tạo sản phẩm",
+    category: category,
   });
 };
 
@@ -95,6 +101,7 @@ module.exports.createItem = async (req, res) => {
   req.body.discountPercentage = parseFloat(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
   req.body.deleted = false;
+  req.body.featured = Boolean(+req.body.featured);
   if (!req.body.position) {
     const position = await databaseProducts.countDocuments({});
     req.body.position = position + 1;
@@ -116,11 +123,13 @@ module.exports.edit = async (req, res) => {
   const { id } = req.params;
   const product = await databaseProducts.findOne({ _id: id });
   const back = req.get("Referer");
-
+  const tree = await databaseCategerys.find({}).lean();
+  const category = treeCategotys(tree);
   res.render("admins/pages/products/edit.pug", {
     title: "Cập Nhật Sản Phẩm",
     product: product,
     back: back,
+    category: category,
   });
 };
 //  [PACTH] "/edit"
@@ -131,14 +140,15 @@ module.exports.editUpadte = async (req, res) => {
   req.body.stock = parseInt(req.body.stock);
   req.body.position = parseInt(req.body.position);
 
-
   if (req.file) {
     req.body.thumbnail = `/uploads/${req.file.filename}`;
   } else {
-    await databaseProducts.updateOne(
-      { _id: id },
-      { $unset: { thumbnail: "" } }
-    );
+    if (!req.body.current) {
+      await databaseProducts.updateOne(
+        { _id: id },
+        { $unset: { thumbnail: "" } }
+      );
+    }
   }
   if (req.body.createdAt) {
     req.body.createdAt = new Date(req.body.createdAt);
@@ -147,10 +157,7 @@ module.exports.editUpadte = async (req, res) => {
   }
 
   await databaseProducts.updateOne({ _id: id }, req.body, {
-    timestamps: false /*
-    Tắt timestamp cho lần update này vì thuộc tính này set ở schema sẽ làm cho các thuộc tính
-    createAt và updateAt immutable (không cho sửa)
-    */,
+    $set: { createdAt: req.body.createdAt },
   });
   req.flash("info", `Cập nhật sản phẩm[${id}] thành công`);
   res.redirect(`/${system.pathAdmin}/products`);

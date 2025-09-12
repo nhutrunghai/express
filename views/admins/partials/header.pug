@@ -25,10 +25,10 @@ header#admin-header.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top.shado
             | Admin
           ul.dropdown-menu.dropdown-menu-end(aria-labelledby="userDropdown")
             li
-              a.dropdown-item(href="/admin/profile") Hồ sơ
+              a.dropdown-item(href=`/${pathAdmin}/profile`) Hồ sơ
             li
-              a.dropdown-item(href="/admin/settings") Cài đặt
+              a.dropdown-item(href=`/${pathAdmin}/settings`) Cài đặt
             li
               hr.dropdown-divider
             li
-              a.dropdown-item.text-danger(href="/admin/logout") Đăng xuất
+              a.dropdown-item.text-danger(href=`/${pathAdmin}/auth/logout`) Đăng xuất

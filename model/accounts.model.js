@@ -9,7 +9,7 @@ const accountSchema = new mongoose.Schema(
     token: { type: String, default: generate.random(21) },
     phone: String,
     avatar: String,
-    role_id: { type: String, default: "" },
+    role_id: { type: mongoose.Schema.Types.ObjectId, ref: "Roles" },
     status: { type: String, default: "active" },
     deleted: {
       type: Boolean,

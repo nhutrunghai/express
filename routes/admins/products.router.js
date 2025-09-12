@@ -1,4 +1,7 @@
 const validateProduct = require("../../validate/products.validate");
+const {
+  requirePermissions,
+} = require("../../middleware/admin/permissions.middleware");
 const multer = require("multer"); /*
   chú ý khi dùng thư viện multer nếu gắn cho thẻ form enctype="multipart/form-data"
   thì ở router nên set upload... để có thể lấy đc body 
@@ -23,17 +26,35 @@ const { Router } = require("express");
 const products = require("../../controllers/admins/products.controller");
 const router = Router();
 router.get("/", products.products);
-router.patch("/change-status/:status/:id", products.changeSingle);
-router.patch("/change-multi", products.changeMulti);
-router.delete("/delete/:id", products.deleteItem);
-router.get("/create", products.create);
+router.patch(
+  "/change-status/:status/:id",
+  requirePermissions("products-edit"),
+  products.changeSingle
+);
+router.patch(
+  "/change-multi",
+  requirePermissions("products-edit"),
+  products.changeMulti
+);
+router.delete(
+  "/delete/:id",
+  requirePermissions("products-delete"),
+  products.deleteItem
+);
+router.get("/create", requirePermissions("products-create"), products.create);
 router.post(
   "/create",
+  requirePermissions("products-create"),
   upload.single("thumbnail"),
   validateProduct.createItem,
   products.createItem
 );
-router.get("/edit/:id", products.edit);
-router.patch("/edit/:id", upload.single("thumbnail"), products.editUpadte);
+router.get("/edit/:id", requirePermissions("products-edit"), products.edit);
+router.patch(
+  "/edit/:id",
+  requirePermissions("products-edit"),
+  upload.single("thumbnail"),
+  products.editUpadte
+);
 router.get("/detail/:id", products.detail);
 module.exports = router;

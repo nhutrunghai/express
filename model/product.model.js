@@ -13,6 +13,12 @@ const productSchemas = new Schema(
     thumbnail: String,
     status: String,
     position: Number,
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+      ref: "Products-Categorys",
+    },
+    featured: { type: Boolean, default: false },
     deleted: { type: Boolean, default: false },
     createdAt: Date,
     deleted_at: Date,
