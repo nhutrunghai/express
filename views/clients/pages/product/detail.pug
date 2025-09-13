@@ -1,0 +1,192 @@
+//- views/clients/product/detail.pug
+extends ../../layouts/default.pug
+include ../../mixins/product.mixin.pug
+
+block main
+  // style.
+  //   body{background:#f3f4f6;} /* xám nhạt nếu muốn áp riêng trang */
+
+  style.
+    /* khối nội dung sáng nổi bật */
+    .page-section{background:#fff;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+    .ratio-1x1{position:relative;padding-top:100%}
+    .ratio-1x1>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:.25rem}
+    .thumbs img{width:60px;height:60px;object-fit:cover}
+    .text-price{color:#e11d48;font-weight:700;font-size:1.75rem}
+    /* REVIEW */
+    .rv-item{padding:16px 0;border-top:1px solid #f0f2f5}
+    .rv-left{width:60px}
+    .avatar{width:40px;height:40px;border-radius:50%;background:#e8eef6;color:#5b6b88;display:flex;align-items:center;justify-content:center;font-weight:700}
+    .stars{color:#f59e0b;font-size:1.05rem}
+    .rv-badge{color:#16a34a;background:#e7f7ec;border-radius:6px;padding:2px 6px;font-size:.8rem;margin-left:8px}
+    .rv-meta{font-size:.85rem;color:#6b7280}
+    .rv-actions a{color:#6b7280;font-size:.9rem;margin-right:14px;text-decoration:none}
+    .rv-actions a:hover{text-decoration:underline;color:#374151}
+    /* Sản phẩm tương tự: card gọn, nhiều item 1 hàng */
+    .product-card .card-title{font-size:.95rem;margin-bottom:.25rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .product-card .price{font-weight:700;color:#e11d48}
+    .product-card .badge{font-size:.7rem}
+    /* Buttons: style giống yêu cầu */
+    .btn-buy{background:#ff5252;border-color:#ff5252;color:#fff;font-weight:600;border-radius:6px;padding:.75rem 1rem}
+    .btn-buy:hover{background:#ff3b3b;border-color:#ff3b3b;color:#fff}
+    .btn-cart{border-width:2px;font-weight:600;border-radius:6px;padding:.75rem 1rem}
+
+  //- KHỐI NỘI DUNG CHÍNH (sáng) -----------------------------
+  .container.py-3.page-section
+    .row
+      // ========== LEFT: GALLERY ==========
+      .col-lg-4.mb-3
+        .card.shadow-sm
+          .card-body
+            .ratio-1x1.mb-3
+              img(src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&h=900&fit=crop" alt="Ảnh sản phẩm")
+            .d-flex.thumbs
+              img.img-thumbnail.mr-2(src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=140&h=140&fit=crop" alt="thumb")
+              img.img-thumbnail.mr-2(src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=140&h=140&fit=crop" alt="thumb")
+              img.img-thumbnail(src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=140&h=140&fit=crop" alt="thumb")
+
+      // ========== CENTER: INFO ==========
+      .col-lg-5.mb-3
+        .card.shadow-sm.mb-3
+          .card-body
+            .mb-2
+              span.badge.badge-warning.mr-2 30 NGÀY ĐỔI TRẢ
+              span.badge.badge-primary CHÍNH HÃNG
+              span.text-muted.small.ml-2 Tác giả: ..., ..., ...
+            h3.mb-2 Combo Cẩm Nang Bé Gái Tuổi Dậy Thì - Quyển 1 & 2 (Tái Bản 2019) (Bộ 2 Quyển)
+            .d-flex.align-items-center.mb-2
+              span.mr-2.stars ★★★★★
+              span.small.text-muted (33) · Đã bán 285
+            .mb-1.text-price 250.369đ
+            .small.text-muted
+              | Giá sau áp dụng mã khuyến mãi · 
+              del.mr-1 266.359đ
+            hr
+            h5.mb-3 Thông tin vận chuyển
+            .d-flex.justify-content-between.align-items-center.mb-2
+              span.small.text-muted Giao đến Q. Hoàn Kiếm, P. Hàng Trống, Hà Nội
+              a.small(href="#") Đổi
+            ul.list-unstyled.mb-0
+              li.mb-2 Giao đúng chiều Thứ Ba · 
+                span.text-success Miễn phí
+              li Freeship 10k đơn từ 45k, Freeship 25k đơn từ 100k
+
+      // ========== RIGHT: CARD MUA HÀNG ==========
+      .col-lg-3.mb-3
+        .card.shadow-sm
+          .card-body
+            .d-flex.align-items-center.mb-2
+              img.rounded(src="https://via.placeholder.com/36" width="36" height="36")
+              .ml-2.flex-grow-1
+                strong Phương Đông Books
+                .small.text-muted 4.8 ★ (38k+ đánh giá)
+              button.btn.btn-sm.btn-light(type="button") 🔍
+            label.d-block.font-weight-bold.mt-2.mb-1 Số Lượng
+            .input-group.input-group-sm.mb-3(style="width:160px")
+              .input-group-prepend
+                button#qtyMinus.btn.btn-outline-secondary(type="button") −
+              input#qtyInput.form-control.text-center(type="number" min="1" value="1")
+              .input-group-append
+                button#qtyPlus.btn.btn-outline-secondary(type="button") +
+            .text-muted.mb-1 Tạm tính
+            h4.font-weight-bold.mb-3 250.369đ
+            // ======= 2 NÚT, MỖI NÚT 1 HÀNG (ép block tuyệt đối) =======
+            button.btn.btn-buy.d-block.w-100.mb-2(type="button") Mua ngay
+            button.btn.btn-outline-primary.btn-cart.d-block.w-100(type="button") Thêm vào giỏ
+
+  // ========== (1) MÔ TẢ SẢN PHẨM ==========
+  .container.page-section.mb-3
+    .card.border-0
+      .card-body
+        h5.mb-3 Mô tả sản phẩm
+        p
+          | Bộ sách “Cẩm Nang Bé Gái Tuổi Dậy Thì” gồm 2 quyển cung cấp kiến thức tâm sinh lý, sức khỏe,
+          |  kỹ năng ứng xử và bảo vệ bản thân. Sách in màu đẹp, nội dung dễ hiểu, phù hợp các bạn mới bước
+          |  vào giai đoạn dậy thì. (Đoạn mô tả mẫu.)
+
+  // ========== (2) ĐÁNH GIÁ (chỉ hiển thị) ==========
+  .container.page-section.mb-3
+    .card.border-0
+      .card-body
+        h5.mb-3 Đánh giá & bình luận
+
+        .rv-item.d-flex.align-items-start
+          .rv-left.mr-3
+            .avatar HN
+          .flex-grow-1
+            .d-flex.justify-content-between
+              .mb-1
+                strong.mr-2 Nguyễn Hoài Nga
+                span.stars ★★★★★
+                span.rv-badge Đã mua hàng
+                span.ml-2.font-weight-bold Cực kì hài lòng
+              a.rv-share.text-muted(href="#") Chia sẻ ↗
+            .rv-meta.mb-1 Đã tham gia 8 năm · Đã viết 177 đánh giá · Đã nhận 0 lượt cảm ơn
+            .rv-meta.mb-2 Đánh giá vào 7 tháng trước · Đã dùng 1 tháng
+            .rv-actions.mt-1
+              a(href="#") 👍 Hữu ích
+              a(href="#") 💬 Bình luận
+              a(href="#") ↗ Chia sẻ
+
+        .rv-item.d-flex.align-items-start
+          .rv-left.mr-3
+            .avatar LT
+          .flex-grow-1
+            .d-flex.justify-content-between
+              .mb-1
+                strong.mr-2 Lê Trang
+                span.stars ★★★★★
+                span.rv-badge Đã mua hàng
+                span.ml-2.font-weight-bold Cực kì hài lòng
+              a.rv-share.text-muted(href="#") Chia sẻ ↗
+            .rv-meta.mb-1 Đã tham gia 4 năm · Đã viết 5 đánh giá · Đã nhận 0 lượt cảm ơn
+            .rv-meta.mb-2 Đánh giá vào 7 tháng trước · Đã dùng 4 ngày
+            .rv-actions.mt-1
+              a(href="#") 👍 Hữu ích
+              a(href="#") 💬 Bình luận
+              a(href="#") ↗ Chia sẻ
+
+        .rv-item.d-flex.align-items-start
+          .rv-left.mr-3
+            .avatar NT
+          .flex-grow-1
+            .d-flex.justify-content-between
+              .mb-1
+                strong.mr-2 Nguyễn Tuyên
+                span.stars ★★★★★
+                span.rv-badge Đã mua hàng
+                span.ml-2.font-weight-bold Cực kì hài lòng
+              a.rv-share.text-muted(href="#") Chia sẻ ↗
+            .rv-meta.mb-2 Đã tham gia 4 năm · Đã viết 6 đánh giá · Đã nhận 0 lượt cảm ơn
+            p.mb-2 Nội dung bổ ích, hình ảnh đẹp
+            img.rounded(src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=260&fit=crop" alt="ảnh review")
+            .rv-meta.mt-2 Đánh giá vào 3 năm trước · Đã dùng 3 ngày
+            .rv-actions.mt-1
+              a(href="#") 👍 Hữu ích
+              a(href="#") 💬 Bình luận
+              a(href="#") ↗ Chia sẻ
+
+  // ========== (3) SẢN PHẨM TƯƠNG TỰ ==========
+  .container.page-section.mb-4
+    h5.mb-3 Sản phẩm tương tự
+    .row
+      each n in [1,2,3,4,5,6,7,8,9,10,11,12]
+        .col-6.col-sm-4.col-md-3.col-lg-2.mb-3
+          .card.h-100.product-card.shadow-sm
+            a(href="#")
+              img.card-img-top(src=`https://picsum.photos/seed/book${n}/400/400` alt="product")
+            .card-body.p-2
+              h6.card-title.mb-1 Tên sản phẩm gợi ý #{n}
+              .small.text-muted Nhà bán A · ★★★★☆
+              .price.mt-1 199.000đ
+block scripts
+  script.
+    (function () {
+      var minus = document.getElementById('qtyMinus');
+      var plus  = document.getElementById('qtyPlus');
+      var input = document.getElementById('qtyInput');
+      if (!minus || !plus || !input) return;
+      minus.addEventListener('click', function(){ var v = parseInt(input.value||1,10); if (v>1) input.value = v-1; });
+      plus.addEventListener('click',  function(){ var v = parseInt(input.value||1,10); input.value = v+1; });
+    })();
+

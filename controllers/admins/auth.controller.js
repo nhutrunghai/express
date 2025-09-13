@@ -15,7 +15,6 @@ module.exports.login = async (req, res) => {
     email: email,
     password: md5(password),
   });
-  console.log(req.body);
   console.log(user);
   if (!user) {
     req.flash("error", "Tài khoản hoặc mật khẩu không đúng !");

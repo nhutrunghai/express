@@ -1,7 +1,9 @@
 const _ = require("lodash");
 const databaseProduct = require("../../model/product.model");
 const databaseCategorys = require("../../model/products-category.model");
-module.exports.product = async (req, res) => {
+// [GET] "/product"
+module.exports.products = async (req, res) => {
+  const Breadcrumb = [{ text: "Trang chủ", href: "/" },{ text: "Sản phẩm", href: "/product" }]
   const products = await databaseProduct
     .find({
       status: "active",
@@ -17,10 +19,14 @@ module.exports.product = async (req, res) => {
   });
   res.render("./clients/pages/product/index.pug", {
     title: "Product",
+    titleCategory:"Danh sách sản phẩm",
     products: newProducts,
+    Breadcrumb:Breadcrumb
   });
 };
+// [GET] "/product/:slugCategory"
 module.exports.category = async (req, res) => {
+  const Breadcrumb = [{ text: "Trang chủ", href: "/" },{ text: "Sản phẩm", href: "/product" }]
   const Categorys = await databaseCategorys
     .find({
       status: "active",
@@ -30,24 +36,31 @@ module.exports.category = async (req, res) => {
   const CategoryParam = Categorys.find(
     (category) => category.slug === req.params.slugCategory
   );
-
-  function findCategory(categoryId) {
-    const result = [];
-    Categorys.flatMap((category) => {
-      if (_.isEqual(category.parentId, categoryId)) {
-        result.push([category._id, ...findCategory(category._id)]);
-      }
-    });
-    return result;
+  function addBreadCrumb(categoryId){
+    if(categoryId.parentId){
+      const parent = Categorys.find(category => _.isEqual(category._id,categoryId.parentId))
+      addBreadCrumb(parent)
+    }
+    Breadcrumb.push({text:categoryId.title,href:`./${categoryId.slug}`})
   }
-  const result = findCategory(CategoryParam._id);
-  console.log({ result });
-
+  addBreadCrumb(CategoryParam)
+ 
+  
+  function findCategory(categoryId){
+    const result = [categoryId];
+    Categorys.forEach(category => {
+      if(_.isEqual(category.parentId,categoryId)){
+        result.push(...findCategory(category._id))
+      }
+    })
+    return result
+  }
+  const root = findCategory(CategoryParam._id)
   const products = await databaseProduct
     .find({
       status: "active",
       deleted: false,
-      category: { $in: result },
+      category: { $in: root },
     })
     .sort({ position: "desc" })
     .lean();
@@ -60,6 +73,11 @@ module.exports.category = async (req, res) => {
   });
   res.render("./clients/pages/product/index.pug", {
     title: "Product",
+    titleCategory: CategoryParam.title ?? "Danh sách sản phẩm",
     products: newProducts,
+    Breadcrumb:Breadcrumb
   });
 };
+module.exports.productItem = async (req,res) =>{
+  res.render("./clients/pages/product/detail.pug",{title: "Product"})
+}

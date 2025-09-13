@@ -1,0 +1,37 @@
+
+if Breadcrumb
+  style.
+    .bc-card { background:#fff; border-radius:14px; padding:12px 16px; }
+    .bc-card .breadcrumb { margin:0; background:transparent; }
+    .bc-card .breadcrumb-item + .breadcrumb-item::before {
+      content:"›"; color:#c0c7d3; font-weight:700; margin:0 .6rem;
+    }
+    .bc-home {
+      width:36px; height:36px; border-radius:50%;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#eef0ff; margin-right:.75rem;
+    }
+    .bc-home svg { width:18px; height:18px; stroke:#5b61ff; }
+    .breadcrumb a { color:#425466; text-decoration:none; }
+    .breadcrumb a:hover { text-decoration:underline; }
+    .breadcrumb .active { color:#5b61ff; font-weight:700; }
+
+  nav(aria-label="breadcrumb")
+    .container
+      .bc-card.shadow-sm
+        .d-flex.align-items-center
+          span.bc-home.mr-2
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+              path(d="M3 10.5l9-7 9 7")
+              path(d="M5 10v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9")
+              path(d="M9 20v-6h6v6")
+
+          ol.breadcrumb
+            each item, i in Breadcrumb
+              if i != Breadcrumb.length - 1 && item.href
+                li.breadcrumb-item
+                  a(href=item.href)= item.text
+              else if i != Breadcrumb.length - 1
+                li.breadcrumb-item= item.text
+              else
+                li.breadcrumb-item.active(aria-current="page")= item.text
