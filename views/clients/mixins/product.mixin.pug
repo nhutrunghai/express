@@ -79,7 +79,7 @@ mixin mixins-product(Products)
 
               .card-footer.bg-white.border-0.pt-2.pb-3.px-3
                 .d-flex.gap-2
-                  a.btn.btn-sm.btn-outline-primary.flex-fill(href=(value && value.href) || '#')
+                  a.btn.btn-sm.btn-outline-primary.flex-fill(href=(value.slug ? `/product/detail/${value.slug}` : '#!'))
                     i.bi.bi-eye.me-1
                     | Xem chi tiết
                   button.btn.btn-sm.btn-primary.flex-fill(type="button")

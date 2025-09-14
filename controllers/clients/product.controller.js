@@ -25,7 +25,7 @@ module.exports.products = async (req, res) => {
   });
 };
 // [GET] "/product/:slugCategory"
-module.exports.category = async (req, res) => {
+module.exports.category = async (req, res,next) => {
   const Breadcrumb = [{ text: "Trang chủ", href: "/" },{ text: "Sản phẩm", href: "/product" }]
   const Categorys = await databaseCategorys
     .find({
@@ -36,6 +36,7 @@ module.exports.category = async (req, res) => {
   const CategoryParam = Categorys.find(
     (category) => category.slug === req.params.slugCategory
   );
+  if(!CategoryParam) return res.status(404).render("./clients/pages/errors/404.pug");  
   function addBreadCrumb(categoryId){
     if(categoryId.parentId){
       const parent = Categorys.find(category => _.isEqual(category._id,categoryId.parentId))
@@ -44,7 +45,7 @@ module.exports.category = async (req, res) => {
     Breadcrumb.push({text:categoryId.title,href:`./${categoryId.slug}`})
   }
   addBreadCrumb(CategoryParam)
- 
+
   
   function findCategory(categoryId){
     const result = [categoryId];
@@ -77,7 +78,17 @@ module.exports.category = async (req, res) => {
     products: newProducts,
     Breadcrumb:Breadcrumb
   });
+
 };
+// [GET] "/product/detail/:slugProduct"
 module.exports.productItem = async (req,res) =>{
-  res.render("./clients/pages/product/detail.pug",{title: "Product"})
+  const product = await databaseProduct.findOne({slug:req.params.slugProduct, deleted:false, status:"active"}).lean();
+  if(product.discountPercentage){
+    product.newPrice =   (
+      product.price *
+      (1 - product.discountPercentage / 100)
+    ).toFixed(0)
+  }
+
+  res.render("./clients/pages/product/detail.pug",{title: product.title,product:product})
 }

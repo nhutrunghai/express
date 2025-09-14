@@ -34,11 +34,9 @@ app.use(cookieParser("FHSABV3JEWFBJSF")); // 1
 app.use(session({ cookie: { maxAge: 60000 } })); // 2
 app.use(flash()); // 3 thằng này dùng để set bắn thông báo
 // Router
-router(app);
+router(app); 
 routerAdmim(app);
 // end
-console.log("path : ", path.join(__dirname, "node_moudles", "tinymce"));
-// `/${__dirname}/node_moudles/tinymce`
 // Database
 database.connect();
 //end

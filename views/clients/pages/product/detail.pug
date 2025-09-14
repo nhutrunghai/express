@@ -39,7 +39,7 @@ block main
         .card.shadow-sm
           .card-body
             .ratio-1x1.mb-3
-              img(src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900&h=900&fit=crop" alt="Ảnh sản phẩm")
+              img(src=product.thumbnail alt="Ảnh sản phẩm")
             .d-flex.thumbs
               img.img-thumbnail.mr-2(src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=140&h=140&fit=crop" alt="thumb")
               img.img-thumbnail.mr-2(src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=140&h=140&fit=crop" alt="thumb")
@@ -50,17 +50,18 @@ block main
         .card.shadow-sm.mb-3
           .card-body
             .mb-2
-              span.badge.badge-warning.mr-2 30 NGÀY ĐỔI TRẢ
-              span.badge.badge-primary CHÍNH HÃNG
+              span.badge.badge-warning.mr-2.text-primary 30 NGÀY ĐỔI TRẢ
+              span.badge.badge-primary.text-primary CHÍNH HÃNG
               span.text-muted.small.ml-2 Tác giả: ..., ..., ...
-            h3.mb-2 Combo Cẩm Nang Bé Gái Tuổi Dậy Thì - Quyển 1 & 2 (Tái Bản 2019) (Bộ 2 Quyển)
+            h3.mb-2 #{product.title}
             .d-flex.align-items-center.mb-2
               span.mr-2.stars ★★★★★
               span.small.text-muted (33) · Đã bán 285
-            .mb-1.text-price 250.369đ
-            .small.text-muted
-              | Giá sau áp dụng mã khuyến mãi · 
-              del.mr-1 266.359đ
+            .mb-1.text-price #{product.newPrice ? `${product.newPrice}đ` : `${product.price}đ`}
+            if product.newPrice
+              .small.text-muted
+                | Giá sau áp dụng mã khuyến mãi · 
+                del.mr-1 #{product.price}đ
             hr
             h5.mb-3 Thông tin vận chuyển
             .d-flex.justify-content-between.align-items-center.mb-2
@@ -85,11 +86,11 @@ block main
             .input-group.input-group-sm.mb-3(style="width:160px")
               .input-group-prepend
                 button#qtyMinus.btn.btn-outline-secondary(type="button") −
-              input#qtyInput.form-control.text-center(type="number" min="1" value="1")
+              input#qtyInput.form-control.text-center(type="number" min="1" max=product.stock  value="1")
               .input-group-append
                 button#qtyPlus.btn.btn-outline-secondary(type="button") +
             .text-muted.mb-1 Tạm tính
-            h4.font-weight-bold.mb-3 250.369đ
+            h4.font-weight-bold.mb-3.price-total #{product.newPrice ? `${product.newPrice}đ` : `${product.price}đ`}
             // ======= 2 NÚT, MỖI NÚT 1 HÀNG (ép block tuyệt đối) =======
             button.btn.btn-buy.d-block.w-100.mb-2(type="button") Mua ngay
             button.btn.btn-outline-primary.btn-cart.d-block.w-100(type="button") Thêm vào giỏ
@@ -99,10 +100,7 @@ block main
     .card.border-0
       .card-body
         h5.mb-3 Mô tả sản phẩm
-        p
-          | Bộ sách “Cẩm Nang Bé Gái Tuổi Dậy Thì” gồm 2 quyển cung cấp kiến thức tâm sinh lý, sức khỏe,
-          |  kỹ năng ứng xử và bảo vệ bản thân. Sách in màu đẹp, nội dung dễ hiểu, phù hợp các bạn mới bước
-          |  vào giai đoạn dậy thì. (Đoạn mô tả mẫu.)
+        p !{product.description}
 
   // ========== (2) ĐÁNH GIÁ (chỉ hiển thị) ==========
   .container.page-section.mb-3
@@ -182,11 +180,21 @@ block main
 block scripts
   script.
     (function () {
-      var minus = document.getElementById('qtyMinus');
-      var plus  = document.getElementById('qtyPlus');
-      var input = document.getElementById('qtyInput');
+      const minus = document.getElementById('qtyMinus');
+      const plus  = document.getElementById('qtyPlus');
+      const input = document.getElementById('qtyInput');
+      const priceInput = document.getElementsByClassName('price-total')[0]
+      const price = parseFloat(priceInput.innerText.split('đ')[0]||1)
       if (!minus || !plus || !input) return;
-      minus.addEventListener('click', function(){ var v = parseInt(input.value||1,10); if (v>1) input.value = v-1; });
-      plus.addEventListener('click',  function(){ var v = parseInt(input.value||1,10); input.value = v+1; });
+      minus.addEventListener('click', function(){ const v = parseInt(input.value||1,10); if (v>1) {
+        input.value = v-1 
+        const result = input.value * price
+        priceInput.innerText = `${result}đ`
+        } });
+      plus.addEventListener('click',  function(){ const v = parseInt(input.value||1,10); if(!(v + 1 > input.max)) {
+        input.value = v+1;
+        const result = input.value * price
+        priceInput.innerText = `${result}đ`
+      } });
     })();
 

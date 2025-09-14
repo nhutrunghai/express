@@ -1,67 +1,68 @@
 include ../mixins/treeCategory.mixin.pug
 
 header
-
-  nav.navbar.navbar-expand-lg.bg-white.shadow-sm
-    .container
-      a.navbar-brand.text-primary.fw-bold(href="#")
+  // Navbar liền khối 2 tầng
+  nav.navbar.navbar-expand-lg.bg-white.shadow-sm.flex-column
+    .container.d-flex.align-items-center.py-2
+      // logo
+      a.navbar-brand.text-primary.fw-bold(href="/")
         i.bi.bi-shop.me-1
         | ShopX
-      button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#mainNav")
-        span.navbar-toggler-icon
-      #mainNav.collapse.navbar-collapse.align-items-center
-        // menu trái
-        ul.navbar-nav.me-auto
-          li.nav-item
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/")
-              i.bi.bi-house.me-2
-              | Trang chủ
 
-          li.nav-item
-            // Sản phẩm
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/product")
-              i.bi.bi-box-seam.me-2
-              | Sản phẩm
-              
-            // submenu phân cấp hiển thị khi hover vào "Sản phẩm"
-            +treeCategory(category,true)
-          // các mục e-commerce hay dùng (chưa đăng nhập)
-          li.nav-item
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/deals")
-              i.bi.bi-tags.me-2
-              | Khuyến mãi
-          li.nav-item
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/new")
-              i.bi.bi-stars.me-2
-              | Hàng mới
-          li.nav-item
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/blog")
-              i.bi.bi-journal-text.me-2
-              | Blog
-          li.nav-item
-            a.nav-link.text-dark.fw-semibold.d-flex.align-items-center(href="/contact")
-              i.bi.bi-telephone.me-2
-              | Liên hệ
+      // search dài
+      form.d-flex.flex-grow-1.mx-4(role="search", action="/search", method="GET")
+        input.form-control.w-100(type="search", name="q", placeholder="Tìm sản phẩm...", aria-label="Search" value=(keySearch ? keySearch : '' ))
+        button.btn.btn-outline-primary.ms-2(type="submit")
+          i.bi.bi-search
 
-        // menu phải
-        ul.navbar-nav.ms-auto
-          li.nav-item
-            a.nav-link.text-dark.d-flex.align-items-center(href="#")
-              i.bi.bi-box-arrow-in-right.me-1
-              | Đăng nhập
-          li.nav-item
-            a.nav-link.text-dark.d-flex.align-items-center(href="#")
-              i.bi.bi-person-plus.me-1
-              | Đăng ký
+      // minicart
+      a.nav-link.position-relative.text-dark.ms-3(href="/cart")
+        i.bi.bi-cart3.fs-5
+        span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-danger #{cart ? (cart.products.length || null) : null}
 
-  // CSS chỉ thêm – không đổi cấu trúc
+      // login / register
+      a.nav-link.text-dark.ms-3(href="/login")
+        i.bi.bi-box-arrow-in-right.me-1
+        | Đăng nhập
+      a.nav-link.text-dark.ms-3(href="/register")
+        i.bi.bi-person-plus.me-1
+        | Đăng ký
+
+    // Tầng menu danh mục (ngay bên dưới, vẫn là con của navbar)
+    .container
+      ul.nav.justify-content-start.w-100.border-top.pt-2
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/")
+            i.bi.bi-house.me-1
+            | Trang chủ
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/product")
+            i.bi.bi-box-seam.me-1
+            | Sản phẩm
+          +treeCategory(category,true)
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/deals")
+            i.bi.bi-tags.me-1
+            | Khuyến mãi
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/new")
+            i.bi.bi-stars.me-1
+            | Hàng mới
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/blog")
+            i.bi.bi-journal-text.me-1
+            | Blog
+        li.nav-item
+          a.nav-link.text-dark.fw-semibold(href="/contact")
+            i.bi.bi-telephone.me-1
+            | Liên hệ
+
+  // CSS chỉnh thêm
   style.
-    /* khoảng cách logo – menu trái */
     @media (min-width: 992px) {
       .navbar .navbar-nav.me-auto { margin-left: 1.25rem; }
     }
 
-    /* dropdown mở khi hover + cầu nối */
     .navbar .nav-item { position: relative; }
     .navbar .nav-item:hover > .dropdown-menu { display: block; }
     .navbar .nav-item > .dropdown-menu:hover { display: block; }
@@ -75,7 +76,6 @@ header
       background: transparent;
     }
 
-    /* MULTI-LEVEL DROPDOWN (flyout) */
     .navbar .dropdown-submenu { position: relative; }
     .navbar .dropdown-submenu > .dropdown-menu {
       top: 0; left: 100%;
@@ -89,6 +89,5 @@ header
       width: 10px; height: 100%; background: transparent;
     }
 
-    /* tinh chỉnh icon */
     .navbar .nav-link i { font-size: 1rem; }
-    
+

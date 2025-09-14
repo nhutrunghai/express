@@ -1,0 +1,32 @@
+
+extends ../../layouts/default.pug
+
+block main
+  .d-flex.flex-column.justify-content-center.align-items-center.text-center.bg-light
+    // ảnh minh họa 404
+    img.error-illustration(src="https://stories.freepiklabs.com/storage/13391/355-404-Error_Artboard-1.svg", alt="404 illustration")
+    p.fs-5.mb-3.text-secondary
+        strong Xin lỗi, chúng tôi không tìm thấy trang bạn yêu cầu.
+        br
+        strong Bạn có thể quay lại trang chủ hoặc tiếp tục tìm kiếm sản phẩm khác.
+    .d-flex.gap-3
+      a.btn.btn-primary.btn-lg(href="/")
+        i.bi.bi-house.me-2
+        | Về trang chủ
+      a.btn.btn-outline-secondary.btn-lg(href="/product")
+        i.bi.bi-box-seam.me-2
+        | Xem sản phẩm
+
+  // CSS viết luôn ở đây
+  style.
+    .error-illustration {
+      max-width: 360px;
+      margin-bottom: 2rem;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+

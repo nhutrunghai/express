@@ -43,3 +43,23 @@ req.route: Trả về thông tin về route hiện tại (chỉ có khi route đ
 req.app: Trả về ứng dụng Express hiện tại.
 
 Đây là các thuộc tính và phương thức chính mà bạn có thể sử dụng khi làm việc với đối tượng req trong Express.
+
+
+
+async function cleanupGuestCarts(days = 7) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const result = await Cart.deleteMany({
+    userId: null,
+    createdAt: { $lt: cutoff }
+  });
+  console.log(`[Cart Cleanup] Deleted ${result.deletedCount} carts older than ${days} days`);
+}
+
+// Cron job: chạy 3h sáng mỗi ngày
+cron.schedule("0 3 * * *", async () => {
+  try {
+    await cleanupGuestCarts(7);
+  } catch (err) {
+    console.error("[Cart Cleanup] Error:", err.message);
+  }
+});
