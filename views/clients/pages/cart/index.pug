@@ -1,0 +1,71 @@
+extends ../../layout/default.pug
+include ../../mixins/product.mixin.pug
+
+block main
+
+  .container.py-3
+    if cartProducts.length > 0
+      .row
+        .col-md-8
+          .card
+            .card-body
+              h4 Giỏ Hàng
+              table.table
+                thead
+                  tr
+                    th Chọn
+                    th Sản phẩm
+                    th Đơn giá
+                    th Số lượng
+                    th Thành tiền
+                    th Thao tác
+                tbody
+                  each item in cartProducts
+                    - const product = item.product_id
+                    tr
+                      td
+                        input.form-check-input(type="checkbox")
+                      td
+                        .d-flex.align-items-center
+                          img(src=product.thumbnail, alt=product.title, class="img-fluid", style="width: 100px;")
+                          .ml-2 #{product.title}đ
+                      td
+                          p.newPrice #{product.newPrice}đ
+                          p.price(style="text-decoration:line-through") #{product.price}
+                      td
+                        input.form-control(type="number", value=item.stock, min="1",max=product.stock, style="width: 80px;")
+                      td #{product.newPrice}đ
+                      td
+                        // Thay nút "Xóa" bằng icon thùng rác
+                        button.btn.delete-btn(style="border-radius: 8px;" data-id=product._id) 
+                          i.bi.bi-trash(style="font-size: 18px;") 
+        .col-md-4
+          .card
+            .card-body
+              h4 Tiki Khuyến Mãi
+              .d-flex.justify-content-between.mt-4
+                span Tạm tính
+                span 13.580.000₫
+              .d-flex.justify-content-between
+                span Giảm giá trực tiếp
+                span.text-success -2.640.000₫
+              .d-flex.justify-content-between.mt-4
+                span Tổng tiền thanh toán
+                span(style="font-size: 20px; font-weight: bold;") 10.940.000₫
+              .d-flex.justify-content-between
+                span Tiết kiệm
+                span.text-success 2.640.000₫
+              p.text-danger Vui lòng chọn sản phẩm
+              button.btn.btn-danger.w-100(style="border-radius: 8px;") Mua Hàng (0)
+      form(action="" method="POST" form-delete data-path="/cart/delete") 
+    else
+      .row
+        .col-md-12.text-center
+          // Biểu tượng giỏ hàng
+          i.bi.bi-cart-dash(style="font-size: 100px; color: #ccc;")
+          h3 Giỏ Hàng Trống
+          p Bạn tham khảo thêm các sản phẩm được gợi ý dưới đây nhé!
+          // Button quay lại mua sắm
+          a.btn.btn-primary(href="/") Quay lại mua sắm
+block scripts
+  script(src="./client/js/cart.js") 

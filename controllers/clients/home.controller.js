@@ -23,10 +23,9 @@ module.exports.home = async (req, res) => {
     .limit(10)
     .lean();
   ProductsNew = ProductsNew.map((value) => {
-    value.newPrice = (
-      value.price *
-      (1 - value.discountPercentage / 100)
-    ).toFixed(0);
+    value.newPrice = parseFloat(
+      (value.price * (1 - value.discountPercentage / 100)).toFixed(0)
+    );
     return value;
   });
   res.render("./clients/pages/home/index.pug", {

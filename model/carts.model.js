@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const cartsSchema = new mongoose.Schema(
   {
-    user_id:mongoose.Schema.Types.ObjectId,
-    products:[
-        {
-            product_id:mongoose.Schema.Types.ObjectId,
-            stock:Number
-        }
-    ]
+    user_id: mongoose.Schema.Types.ObjectId,
+    products: [
+      {
+        product_id: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        stock: Number,
+      },
+    ],
   },
   {
     timestamps: true,

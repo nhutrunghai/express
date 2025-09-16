@@ -1,5 +1,5 @@
 //- views/clients/product/detail.pug
-extends ../../layouts/default.pug
+extends ../../layout/default.pug
 include ../../mixins/product.mixin.pug
 
 block main
@@ -32,7 +32,8 @@ block main
     .btn-cart{border-width:2px;font-weight:600;border-radius:6px;padding:.75rem 1rem}
 
   //- KHỐI NỘI DUNG CHÍNH (sáng) -----------------------------
-  .container.py-3.page-section
+
+  .container.py-3.page-section.mt-3
     .row
       // ========== LEFT: GALLERY ==========
       .col-lg-4.mb-3
@@ -86,7 +87,7 @@ block main
             .input-group.input-group-sm.mb-3(style="width:160px")
               .input-group-prepend
                 button#qtyMinus.btn.btn-outline-secondary(type="button") −
-              input#qtyInput.form-control.text-center(type="number" min="1" max=product.stock  value="1")
+              input#qtyInput.form-control.text-center.stockInput(type="number" min="1" max=product.stock  value="1")
               .input-group-append
                 button#qtyPlus.btn.btn-outline-secondary(type="button") +
             .text-muted.mb-1 Tạm tính
@@ -94,7 +95,9 @@ block main
             // ======= 2 NÚT, MỖI NÚT 1 HÀNG (ép block tuyệt đối) =======
             button.btn.btn-buy.d-block.w-100.mb-2(type="button") Mua ngay
             button.btn.btn-outline-primary.btn-cart.d-block.w-100(type="button") Thêm vào giỏ
-
+            form.add-data(action="" method="POST" hidden)
+              input(type="text" name='product_id' value=product._id)
+              input(type="number" name='stock') 
   // ========== (1) MÔ TẢ SẢN PHẨM ==========
   .container.page-section.mb-3
     .card.border-0
@@ -178,6 +181,7 @@ block main
               .small.text-muted Nhà bán A · ★★★★☆
               .price.mt-1 199.000đ
 block scripts
+  
   script.
     (function () {
       const minus = document.getElementById('qtyMinus');
@@ -185,6 +189,14 @@ block scripts
       const input = document.getElementById('qtyInput');
       const priceInput = document.getElementsByClassName('price-total')[0]
       const price = parseFloat(priceInput.innerText.split('đ')[0]||1)
+      const btnCart = document.querySelector('.btn-cart')
+      const formAdd = document.querySelector('.add-data')
+      const stockInput = document.querySelector('.stockInput')
+      btnCart.addEventListener("click",() => { 
+        formAdd.action = "/cart/add"
+        formAdd.querySelector('input[name="stock"]').value = stockInput.value
+        formAdd.submit()
+      })
       if (!minus || !plus || !input) return;
       minus.addEventListener('click', function(){ const v = parseInt(input.value||1,10); if (v>1) {
         input.value = v-1 

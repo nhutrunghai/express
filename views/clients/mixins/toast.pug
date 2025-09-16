@@ -1,0 +1,7 @@
+mixin Toast(messages)
+    - if(messages.info)
+        template(class="messages" data-status ='true') 
+            span #{messages.info}
+    - if(messages.error)
+        template(class="messages" data-status ='false') 
+            span #{messages.error}
