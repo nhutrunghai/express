@@ -68,10 +68,14 @@ module.exports.delete = async (req, res) => {
   const cartId = req.cookies.cartId;
   if (id) {
     await databaseCart.updateOne(
-      { _id: cartId, "products.product_id": id },
-      { $unset: { "products.$": "" } }
+      { _id: cartId},
+      { $pull:{
+        products:{
+            product_id:id
+        }
+      } } 
     );
   }
-
-  res.send("ok");
+  req.flash("info", "Xóa sản phẩm khỏi đơn hàng");
+  res.redirect(req.get("Referer"))
 };

@@ -92,7 +92,7 @@ module.exports.productItem = async (req, res) => {
     .lean();
   if (product.discountPercentage) {
     product.newPrice = parseFloat(
-      (value.price * (1 - value.discountPercentage / 100)).toFixed(0)
+      (product.price * (1 - product.discountPercentage / 100)).toFixed(0)
     );
   }
   const Breadcrumb = [

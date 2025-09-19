@@ -33,8 +33,9 @@ block main
                           p.newPrice #{product.newPrice}đ
                           p.price(style="text-decoration:line-through") #{product.price}
                       td
-                        input.form-control(type="number", value=item.stock, min="1",max=product.stock, style="width: 80px;")
-                      td #{product.newPrice}đ
+                        input.stockProduct.form-control(type="number", value=item.stock, min="1",max=product.stock, style="width: 80px;")
+                      td 
+                        p.totalPrice #{product.newPrice * item.stock}đ
                       td
                         // Thay nút "Xóa" bằng icon thùng rác
                         button.btn.delete-btn(style="border-radius: 8px;" data-id=product._id) 
